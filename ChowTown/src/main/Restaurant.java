@@ -1,85 +1,123 @@
 package main;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 
 public class Restaurant {
-	public static void main(String args[]) {
-		JFrame restaurantPage = new JFrame();;
+
+	private GridBagConstraints c = new GridBagConstraints();
+
+	public JPanel createPage() {
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(2,3));
+		panel.setLayout(new GridLayout(3,1));
 		
-		JPanel restaurant1 = new JPanel(new BorderLayout(1,1));
-		JLabel ch = new JLabel("Chinese Restaurant");
-		ch.setFont(new Font("monospaced", Font.PLAIN, 20));
-		ch.setHorizontalAlignment(JLabel.CENTER);
-		ch.setVerticalAlignment(JLabel.CENTER);
-		ImageIcon icon1 = new ImageIcon("images/China.png");
-		JLabel img1 = new JLabel(icon1);
-		restaurant1.add(ch, BorderLayout.PAGE_START);
-		restaurant1.add(img1, BorderLayout.CENTER);
-		panel.add(restaurant1);
 		
-		JPanel restaurant2 = new JPanel();
-		restaurant2.setLayout(new BorderLayout());
-		JLabel jp = new JLabel("Japanese Restaurant");
-		jp.setFont(new Font("monospaced", Font.PLAIN, 20));
-		jp.setHorizontalAlignment(JLabel.CENTER);
-		jp.setVerticalAlignment(JLabel.CENTER);
-		ImageIcon icon2 = new ImageIcon("images/Japan.png");
-		JLabel img2 = new JLabel(icon2);
-		restaurant2.add(jp, BorderLayout.PAGE_START);
-		restaurant2.add(img2, BorderLayout.CENTER);
-		panel.add(restaurant2);
+		panel.add(addPE());
+		panel.add(addS());
+		panel.add(addMC());
 		
-		JPanel restaurant3 = new JPanel(new BorderLayout());
-		JLabel in = new JLabel("Indian Restaurant");
-		in.setFont(new Font("monospaced", Font.PLAIN, 20));
-		in.setHorizontalAlignment(JLabel.CENTER);
-		in.setVerticalAlignment(JLabel.CENTER);
-		ImageIcon icon3 = new ImageIcon("images/India.png");
-		JLabel img3 = new JLabel(icon3);
-		restaurant3.add(in, BorderLayout.PAGE_START);
-		restaurant3.add(img3, BorderLayout.CENTER);
-		panel.add(restaurant3);
+		return panel;
+	}
+	
+	private JPanel addPE() {
+		JPanel pandaExpress = new JPanel();
+		pandaExpress.setLayout(new GridBagLayout());
 		
-		JPanel restaurant4 = new JPanel(new BorderLayout());
-		JLabel ko = new JLabel("Korean Restaurant");
-		ko.setFont(new Font("monospaced", Font.PLAIN, 20));
-		ko.setHorizontalAlignment(JLabel.CENTER);
-		ko.setVerticalAlignment(JLabel.CENTER);
-		ImageIcon icon4 = new ImageIcon("images/SouthKorea.png");
-		JLabel img4 = new JLabel(icon4);
-		restaurant4.add(ko, BorderLayout.PAGE_START);
-		restaurant4.add(img4, BorderLayout.CENTER);
-		panel.add(restaurant4);
+		JLabel PELabel = new JLabel("Panda Express");
+		PELabel.setFont(new Font("monospaced", Font.PLAIN, 30));
+	
+		ImageIcon PEImage = new ImageIcon("images/China.png");
+		JButton PEButton = new JButton(PEImage);
+		PEButton.setSize(400, 400);
+		PEButton.setContentAreaFilled(false);
+		PEButton.setBorderPainted(false);
+		PEButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Main.goToMenu(Menu.PE);
+			}
+			
+		});
 		
-		JPanel restaurant5 = new JPanel(new BorderLayout());
-		JLabel vi = new JLabel("Vietnamese Restaurant");
-		vi.setFont(new Font("monospaced", Font.PLAIN, 20));
-		vi.setHorizontalAlignment(JLabel.CENTER);
-		vi.setVerticalAlignment(JLabel.CENTER);
-		ImageIcon icon5 = new ImageIcon("images/Vietnam.png");
-		JLabel img5 = new JLabel(icon5);
-		restaurant5.add(vi, BorderLayout.PAGE_START);
-		restaurant5.add(img5, BorderLayout.CENTER);
-		panel.add(restaurant5);
+		c.gridx = 0;
+		c.gridy = 0;
+		pandaExpress.add(PELabel, c);
 		
-		restaurantPage.add(panel);
-    	restaurantPage.setSize(800, 800);
-        restaurantPage.setVisible(true);
-        restaurantPage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		c.gridy = 1;
+		pandaExpress.add(PEButton, c);
 		
+		return pandaExpress;
+	}
+	
+	private JPanel addS() {
+		JPanel sakura = new JPanel();
+		sakura.setLayout(new GridBagLayout());
+		
+		JLabel SLabel = new JLabel("Sakura");
+		SLabel.setFont(new Font("monospaced", Font.PLAIN, 30));
+		
+		ImageIcon SImage = new ImageIcon("images/Japan.png");
+		JButton SButton = new JButton(SImage);
+		SButton.setSize(SImage.getIconWidth(), SImage.getIconHeight());
+		SButton.setContentAreaFilled(false);
+		SButton.setBorderPainted(false);
+		SButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Main.goToMenu(Menu.S);
+			}
+			
+		});
+		
+		c.gridx = 0;
+		c.gridy = 0;
+		sakura.add(SLabel, c);
+		
+		c.gridy = 1;
+		sakura.add(SButton, c);
+		
+		return sakura;
+	}
+	
+	private JPanel addMC() {
+		JPanel masalaCafe = new JPanel();
+		masalaCafe.setLayout(new GridBagLayout());
+		
+		JLabel MCLabel = new JLabel("Masala Cafe");
+		MCLabel.setFont(new Font("monospaced", Font.PLAIN, 30));
+		
+		ImageIcon MCImage = new ImageIcon("images/India.png");
+		JButton MCButton = new JButton(MCImage);
+		MCButton.setSize(MCImage.getIconWidth(), MCImage.getIconHeight());
+		MCButton.setContentAreaFilled(false);
+		MCButton.setBorderPainted(false);
+		MCButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Main.goToMenu(Menu.MC);
+			}
+			
+		});
+		
+		c.gridx = 0;
+		c.gridy = 0;
+		masalaCafe.add(MCLabel, c);
+		
+		c.gridy = 1;
+		masalaCafe.add(MCButton, c);
+		
+		return masalaCafe;
 	}
 }

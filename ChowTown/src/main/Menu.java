@@ -70,6 +70,7 @@ public class Menu {
 		GridBagConstraints c = new GridBagConstraints();
 		ArrayList<String> items = new ArrayList<String>();
 		ArrayList<Double> prices = new ArrayList<Double>();
+		ArrayList<Double> ratings = new ArrayList<Double>();
 		
 		cart = new ArrayList<String>();
 		totalPrice = 0;
@@ -80,6 +81,7 @@ public class Menu {
 			while(rs.next()) {
 				items.add(rs.getString("item"));
 				prices.add(rs.getDouble("price"));
+				ratings.add(rs.getDouble("avg_rating"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -130,6 +132,11 @@ public class Menu {
 			price.setFont(new Font("monospaced", Font.PLAIN, 20));
 			c.gridx = 1;
 			panel.add(price, c);
+			JLabel rate = new JLabel("Rate:" + Double.toString(ratings.get(i)));
+			rate.setBorder(border);
+			rate.setFont(new Font("monospaced", Font.PLAIN, 20));
+			c.gridx = 2;
+			panel.add(rate, c);
 			JButton add = new JButton("Add to Cart");
 			add.setFont(new Font("monospaced", Font.PLAIN, 20));
 			add.setPreferredSize(new Dimension(170,50));
@@ -140,7 +147,7 @@ public class Menu {
 				}
 				
 			});
-			c.gridx = 2;
+			c.gridx = 3;
 			panel.add(add, c);
 			
 			JButton remove = new JButton("Remove");
@@ -153,7 +160,7 @@ public class Menu {
 				}
 				
 			});
-			c.gridx = 3;
+			c.gridx = 4;
 			panel.add(remove, c);
 		}
 		

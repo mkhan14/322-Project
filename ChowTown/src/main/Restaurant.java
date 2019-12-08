@@ -1,34 +1,86 @@
 package main;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Restaurant {
-
+	private Connection conn = Main.getConnection();
 	private GridBagConstraints c = new GridBagConstraints();
-
+	
+	final static int VISITOR = -1;
+	final static int BLACKLIST = 0;
+	final static int REGISTERED = 1;
+	final static int VIP = 2;
+	
+	final static String[] STATUS = {"BLACKLISTED", "REGISTERED ", "VIP"};
+	
 	public JPanel createPage() {
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(3,1));
+		JPanel panel = new JPanel(new BorderLayout());
 		
+		JPanel header = new JPanel();
+		header.add(headers());
+		panel.add(header, BorderLayout.NORTH);
 		
-		panel.add(addPE());
-		panel.add(addS());
-		panel.add(addMC());
+		JPanel rest = new JPanel();
+		rest.setLayout(new GridLayout(3,1));
+		rest.add(pandaExpress());
+		rest.add(sakura());
+		rest.add(masalaCafe());
+		panel.add(rest, BorderLayout.CENTER);
 		
 		return panel;
 	}
 	
-	private JPanel addPE() {
+	private JPanel headers() {
+		JPanel headers = new JPanel();
+		
+		JButton myAccount = new JButton("My Account");
+		myAccount.setPreferredSize(new Dimension(150, 40));
+		myAccount.setFont(new Font("monospaced", Font.PLAIN, 20));
+		myAccount.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Main.goToMyAccount();
+			}
+			
+		});
+		
+		JButton login = new JButton("Login");
+		login.setPreferredSize(new Dimension(100, 40));
+		login.setFont(new Font("monospaced", Font.PLAIN, 20));
+		login.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Main.goToLogin();
+			}
+			
+		});
+		
+		headers.add(myAccount);
+		headers.add(login);
+		
+		return headers;
+	}
+	
+	private JPanel pandaExpress() {
 		JPanel pandaExpress = new JPanel();
 		pandaExpress.setLayout(new GridBagLayout());
 		
@@ -44,7 +96,10 @@ public class Restaurant {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Main.goToMenu(Menu.PE);
+				if(!isBlacklisted(Menu.PE))
+					Main.goToMenu(Menu.PE);
+				else
+					JOptionPane.showMessageDialog(null,"You have been blacklisted.");
 			}
 			
 		});
@@ -59,7 +114,7 @@ public class Restaurant {
 		return pandaExpress;
 	}
 	
-	private JPanel addS() {
+	private JPanel sakura() {
 		JPanel sakura = new JPanel();
 		sakura.setLayout(new GridBagLayout());
 		
@@ -75,7 +130,10 @@ public class Restaurant {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Main.goToMenu(Menu.S);
+				if(!isBlacklisted(Menu.S))
+					Main.goToMenu(Menu.S);
+				else
+					JOptionPane.showMessageDialog(null,"You have been blacklisted.");
 			}
 			
 		});
@@ -90,7 +148,7 @@ public class Restaurant {
 		return sakura;
 	}
 	
-	private JPanel addMC() {
+	private JPanel masalaCafe() {
 		JPanel masalaCafe = new JPanel();
 		masalaCafe.setLayout(new GridBagLayout());
 		
@@ -106,7 +164,10 @@ public class Restaurant {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Main.goToMenu(Menu.MC);
+				if(!isBlacklisted(Menu.MC))
+					Main.goToMenu(Menu.MC);
+				else
+					JOptionPane.showMessageDialog(null,"You have been blacklisted.");
 			}
 			
 		});
@@ -119,5 +180,32 @@ public class Restaurant {
 		masalaCafe.add(MCButton, c);
 		
 		return masalaCafe;
+	}
+	
+	private boolean isBlacklisted(int restID) {
+		int status = getStatus(restID);
+		if(status == BLACKLIST)
+			return true;
+		return false;
+	}
+	
+	public int getStatus(int restID) {
+		Customer customer = Main.getCustomer();
+		int status = VISITOR;
+		if(customer != null) {
+			int id = customer.getId();
+			String query = "SELECT status FROM customerratings WHERE cust_id = " + id + " AND rest_id = " + restID + ";";
+			try {
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(query);
+				while(rs.next()) {
+					status = rs.getInt("status");
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			return status;
+		}
+		return status;
 	}
 }

@@ -29,6 +29,7 @@ public class Info {
 	final static int OI = 2;
 	
 	final static String[] statString = {"BLACKLISTED", "REGISTERED ", "VIP"};
+	final static String[] jobString = {"COOK", "DELIVERY PERSON", "SALESPERSON"};
 	
 	private Connection conn = Main.getConnection();
 	/*private ArrayList<String> customers = new ArrayList<String>();
@@ -44,10 +45,11 @@ public class Info {
 	private ArrayList<Integer> cust_ids;
 	private ArrayList<Integer> numRateds;
 	
-	private ArrayList<String> employees = new ArrayList<String>();
-	private ArrayList<String> jobTitles = new ArrayList<String>();
-	private ArrayList<Double> salaries = new ArrayList<Double>();
-	private ArrayList<Double> empl_avg_ratings = new ArrayList<Double>();
+	private ArrayList<String> employees;
+	private ArrayList<Integer> jobTitles;
+	private ArrayList<Double> salaries;
+	private ArrayList<Double> empl_avg_ratings;
+	private ArrayList<Double> lThree;
 	
 	private static Manager manager;
 	
@@ -63,10 +65,17 @@ public class Info {
 		cust_ids = new ArrayList<Integer>();
 		numRateds = new ArrayList<Integer>();
 		
+		employees = new ArrayList<String>();
+		jobTitles = new ArrayList<Integer>();
+		salaries = new ArrayList<Double>();
+		empl_avg_ratings = new ArrayList<Double>();
+		lThree = new ArrayList<Double>();
+		
 		//String query = "SELECT name,address FROM customers JOIN customerratings WHERE rest_id = " + restID + " AND cust_id = id";
 		String query = "SELECT name,address,avg_rating,status,id,num_rated FROM customers JOIN customerratings WHERE rest_id = " + restID + " AND cust_id = id";
 		//String query1 = "SELECT avg_rating FROM customerratings JOIN customers WHERE rest_id = " + restID + " AND cust_id = id";
-		String query2 = "SELECT * FROM employees";
+		//String query2 = "SELECT * FROM employees";
+		String query2 = "SELECT name,job_title,salary,avg_rating,last_three FROM employees WHERE rest_id = " + restID;
 		
 		try {
 			Statement stmt = conn.createStatement();
@@ -85,9 +94,10 @@ public class Info {
 			ResultSet rs2 = stmt.executeQuery(query2);
 			while(rs2.next()) {
 				employees.add(rs2.getString("name"));
-				jobTitles.add(rs2.getString("job_title"));
+				jobTitles.add(rs2.getInt("job_title"));
 				salaries.add(rs2.getDouble("salary"));
 				empl_avg_ratings.add(rs2.getDouble("avg_rating"));
+				lThree.add(rs2.getDouble("last_three"));
 			}
 			
 		} catch (SQLException e) {
@@ -241,7 +251,7 @@ public class Info {
 		}
 		
 		if(infoID == EI) {
-			panel.setLayout(new GridLayout(4,1));
+			panel.setLayout(new GridLayout(5,1));
 			
 			JComboBox emplList = new JComboBox(employees.toArray());
 			panel.add(emplList);
@@ -249,11 +259,53 @@ public class Info {
 			JLabel jtitle = new JLabel("");
 			panel.add(jtitle);
 			
+			
 			JLabel sal = new JLabel("");
 			panel.add(sal);
 			
 			JLabel empl_av_rate = new JLabel("");
 			panel.add(empl_av_rate);
+			
+			JLabel lastThreeLabel = new JLabel("");
+			panel.add(lastThreeLabel);
+			
+			/*JButton update_salary_Btn = new JButton("Update Salary of This Employee");
+			panel.add(update_salary_Btn);
+			update_salary_Btn.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(cust_avg_ratings.get(custList.getSelectedIndex()) > 4 && cust_status.get(custList.getSelectedIndex()) == 1 && numRateds.get(custList.getSelectedIndex()) > 3) {
+						//alter row of customerrating where rating is 1 so that the status becomes 0
+						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 (this would be so that any customer with avg rating of 1 can be blacklisted)
+						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND cust_id = customers.id (idk if this will work)
+						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND cust_id = cust_ids.get(custList.getSelectedIndex());
+						//then run goToInfo
+						
+						String updateStat = "UPDATE customerratings SET status = '2' WHERE avg_rating > 4 AND num_rated > 3 AND status = 1 AND rest_id = " + restID + " AND cust_id = " + cust_ids.get(custList.getSelectedIndex());
+						try {
+							Statement stmt = conn.createStatement();
+							stmt.executeUpdate(updateStat);
+							Main.goToInfo(Info.EI);
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+					}else if(cust_avg_ratings.get(custList.getSelectedIndex()) < 2 && (custList.getSelectedIndex()) > 1 && cust_status.get(custList.getSelectedIndex()) == 1 && numRateds.get(custList.getSelectedIndex()) > 3){
+						String updateStat = "UPDATE customerratings SET status = '-1' WHERE avg_rating < 2 AND avg_rating > 1 AND num_rated > 3 AND status = 1 AND rest_id = " + restID + " AND cust_id = " + cust_ids.get(custList.getSelectedIndex());
+						try {
+							Statement stmt = conn.createStatement();
+							stmt.executeUpdate(updateStat);
+							Main.goToInfo(Info.EI);
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+					}else {
+						System.out.println("no promotion/demotion occured");
+					}
+					
+				
+				}
+			});*/
 			
 			
 			emplList.addActionListener(new ActionListener() {
@@ -271,7 +323,14 @@ public class Info {
 					jtitle.setFont(new Font("monospaced", Font.PLAIN, 20));
 					//c.gridx = 0; c.gridy = 1;
 					//panel.remove(addr);
-					jtitle.setText("Job title: "+ jobTitles.get(emplList.getSelectedIndex()).toString());
+					//jtitle.setText("Job title: "+ jobTitles.get(emplList.getSelectedIndex()).toString());
+					if(jobTitles.get(emplList.getSelectedIndex()) == 0) {
+						jtitle.setText("Job Title: " + jobString[0]);
+					}else if(jobTitles.get(emplList.getSelectedIndex()) == 1) {
+						jtitle.setText("Job Title: " + jobString[1]);
+					}else if(jobTitles.get(emplList.getSelectedIndex()) == 2) {
+						jtitle.setText("Job Title: " + jobString[2]);
+					}
 					
 					sal.setFont(new Font("monospaced", Font.PLAIN, 20));
 					sal.setText("Salary: "+ salaries.get(emplList.getSelectedIndex()).toString());
@@ -279,11 +338,16 @@ public class Info {
 					empl_av_rate.setFont(new Font("monospaced", Font.PLAIN, 20));
 					empl_av_rate.setText("Average Rating: "+ empl_avg_ratings.get(emplList.getSelectedIndex()).toString());
 					
-					
+					lastThreeLabel.setFont(new Font("monospaced", Font.PLAIN, 20));
+					lastThreeLabel.setText("Last Three Ratings Average: "+ lThree.get(emplList.getSelectedIndex()).toString());
 				
 				}
 			});
 		}
+		
+		//if(infoID == OI){
+			
+		//}
 		
 		return panel;
 	}

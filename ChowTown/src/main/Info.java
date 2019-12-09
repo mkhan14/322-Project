@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,32 +28,58 @@ public class Info {
 	final static int EI = 1;
 	final static int OI = 2;
 	
+	final static String[] statString = {"BLACKLISTED", "REGISTERED ", "VIP"};
+	
 	private Connection conn = Main.getConnection();
-	private ArrayList<String> customers = new ArrayList<String>();
+	/*private ArrayList<String> customers = new ArrayList<String>();
 	private ArrayList<Integer> addresses = new ArrayList<Integer>();
+	private ArrayList<Integer> cust_status = new ArrayList<Integer>();
+	private ArrayList<Double> cust_avg_ratings = new ArrayList<Double>();
+	private ArrayList<Integer> cust_ids = new ArrayList<Integer>();*/
+	
+	private ArrayList<String> customers;
+	private ArrayList<Integer> addresses;
+	private ArrayList<Integer> cust_status;
+	private ArrayList<Double> cust_avg_ratings;
+	private ArrayList<Integer> cust_ids;
 	
 	private ArrayList<String> employees = new ArrayList<String>();
 	private ArrayList<String> jobTitles = new ArrayList<String>();
 	private ArrayList<Double> salaries = new ArrayList<Double>();
 	private ArrayList<Double> empl_avg_ratings = new ArrayList<Double>();
 	
+	private static Manager manager;
+	
 
 	/**
 	 * @wbp.parser.entryPoint
 	 */
-	public JPanel generateInfo(int infoID) {
-		String query = "SELECT * FROM customers";
+	public JPanel generateInfo(int infoID, int restID) {
+		customers = new ArrayList<String>();
+		addresses = new ArrayList<Integer>();
+		cust_status = new ArrayList<Integer>();
+		cust_avg_ratings = new ArrayList<Double>();
+		cust_ids = new ArrayList<Integer>();
+		
+		//String query = "SELECT name,address FROM customers JOIN customerratings WHERE rest_id = " + restID + " AND cust_id = id";
+		String query = "SELECT name,address,avg_rating,status,id FROM customers JOIN customerratings WHERE rest_id = " + restID + " AND cust_id = id";
+		//String query1 = "SELECT avg_rating FROM customerratings JOIN customers WHERE rest_id = " + restID + " AND cust_id = id";
 		String query2 = "SELECT * FROM employees";
+		
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
+			//ResultSet rs1 = stmt.executeQuery(query1);
 			while(rs.next()) {
 				customers.add(rs.getString("name"));
 				addresses.add(rs.getInt("address"));
+				cust_avg_ratings.add(rs.getDouble("avg_rating"));
+				cust_status.add(rs.getInt("status"));
+				cust_ids.add(rs.getInt("id"));
 			}
 			
-			Statement stmt2 = conn.createStatement();
-			ResultSet rs2 = stmt2.executeQuery(query2);
+			//Statement stmt2 = conn.createStatement();
+			ResultSet rs2 = stmt.executeQuery(query2);
 			while(rs2.next()) {
 				employees.add(rs2.getString("name"));
 				jobTitles.add(rs2.getString("job_title"));
@@ -87,7 +114,7 @@ public class Info {
 		JPanel panel = new JPanel();
 		
 		if(infoID == CI) {
-			panel.setLayout(new GridLayout(2,1));
+			panel.setLayout(new GridLayout(6,1));
 			
 			
 			JComboBox custList = new JComboBox(customers.toArray());
@@ -96,6 +123,43 @@ public class Info {
 			
 			JLabel addr = new JLabel("");
 			panel.add(addr);
+			
+			JLabel acr = new JLabel("");
+			panel.add(acr);
+			
+			JLabel stat = new JLabel("");
+			panel.add(stat);
+			
+			JButton bListBtn = new JButton("Blacklist This Customer");
+			panel.add(bListBtn);
+			bListBtn.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(cust_avg_ratings.get(custList.getSelectedIndex()) == 1 && cust_status.get(custList.getSelectedIndex()) != 0) {
+						//alter row of customerrating where rating is 1 so that the status becomes 0
+						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 (this would be so that any customer with avg rating of 1 can be blacklisted)
+						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND cust_id = customers.id (idk if this will work)
+						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND cust_id = cust_ids.get(custList.getSelectedIndex());
+						//then run goToInfo
+						
+						String updateStat = "UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND rest_id = " + restID + " AND cust_id = " + cust_ids.get(custList.getSelectedIndex());
+						try {
+							Statement stmt = conn.createStatement();
+							stmt.executeUpdate(updateStat);
+							Main.goToInfo(Info.CI);
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+					}else {
+						System.out.println("nothing happened");
+					}
+					
+				
+				}
+			});
+			
+			
 			custList.addActionListener(new ActionListener() {
 
 				@Override
@@ -112,6 +176,22 @@ public class Info {
 					//c.gridx = 0; c.gridy = 1;
 					//panel.remove(addr);
 					addr.setText("Address: Area "+ addresses.get(custList.getSelectedIndex()).toString());
+					
+					acr.setFont(new Font("monospaced", Font.PLAIN, 20));
+					//c.gridx = 0; c.gridy = 1;
+					//panel.remove(addr);
+					acr.setText("Average Rating: "+ cust_avg_ratings.get(custList.getSelectedIndex()).toString());
+					
+					stat.setFont(new Font("monospaced", Font.PLAIN, 20));
+					if(cust_status.get(custList.getSelectedIndex()) == 0) {
+						stat.setText("Status: " + statString[0]);
+					}else if(cust_status.get(custList.getSelectedIndex()) == 1) {
+						stat.setText("Status: " + statString[1]);
+					}else if(cust_status.get(custList.getSelectedIndex()) == 2) {
+						stat.setText("Status: " + statString[2]);
+					}else {
+						stat.setText("Status: VISITOR");
+					}
 					
 					
 				
@@ -133,6 +213,8 @@ public class Info {
 			
 			JLabel empl_av_rate = new JLabel("");
 			panel.add(empl_av_rate);
+			
+			
 			emplList.addActionListener(new ActionListener() {
 
 				@Override
@@ -164,5 +246,9 @@ public class Info {
 		
 		return panel;
 	}
+	
+	//public static int convertStatusToString(int cs) {
+	//	
+	//}
 
 }

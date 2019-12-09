@@ -17,14 +17,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class MyAccount extends JFrame{
+public class CustomerAccount extends JFrame{
 	private Connection conn = Main.getConnection();
 	private GridBagConstraints c = new GridBagConstraints();
+	
+	final static int AREA0 = 0;
+	final static int AREA1 = 1;
+	final static int AREA2 = 2;
+	final static String[] areas = {"AREA0", "AREA1", "AREA2"};
 
-	public MyAccount() {
-		Customer customer = Main.getCustomer();
+	public CustomerAccount() {
+		User customer = Main.getUser();
 		int addrsID = -1;
-		String addrs = "";
 		String statPE = "";
 		double ratingPE = 0;
 		String statS = "";
@@ -34,6 +38,7 @@ public class MyAccount extends JFrame{
 
 		String query = "SELECT address, rest_id, avg_rating, status FROM customers JOIN customerratings WHERE id = " + customer.getId() 
 				+ " AND cust_id = " + customer.getId() + ";";
+		System.out.println(customer.getId());
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
@@ -60,9 +65,8 @@ public class MyAccount extends JFrame{
 		JPanel panel = new JPanel(new GridBagLayout());
 		JLabel name = new JLabel("Name: " + customer.getName());
 		name.setFont(new Font("monospaced", Font.PLAIN, 20));
-		JLabel address = new JLabel("Address: "+addrs);
+		JLabel address = new JLabel("Address: "+ areas[addrsID]);
 		address.setFont(new Font("monospaced", Font.PLAIN, 20));
-		
 		JLabel statusPE = new JLabel("Status for Panda Express: "+statPE);
 		statusPE.setFont(new Font("monospaced", Font.PLAIN, 20));
 		JLabel avgRatingPE = new JLabel("Current Rating for Panda Express: "+ratingPE);
@@ -76,6 +80,18 @@ public class MyAccount extends JFrame{
 		JLabel avgRatingMC = new JLabel("Current Rating for Masala Cafe: "+ratingMC);
 		avgRatingMC.setFont(new Font("monospaced", Font.PLAIN, 20));
 		
+		JButton orderHistory = new JButton("Order History");
+		orderHistory.setFont(new Font("monospaced", Font.PLAIN, 15));
+		orderHistory.setPreferredSize(new Dimension(150, 40));
+		orderHistory.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+			
+		});
+		
 		JButton logout = new JButton("Logout");
 		logout.setFont(new Font("monospaced", Font.PLAIN, 15));
 		logout.setPreferredSize(new Dimension(80, 40));
@@ -83,7 +99,7 @@ public class MyAccount extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Main.setCustomer(null);
+				Main.setUser(null);
 				dispose();
 			}
 			
@@ -93,8 +109,7 @@ public class MyAccount extends JFrame{
 		panel.add(name, c);
 		c.gridy = 1;
 		panel.add(address, c);
-		
-		c.gridx = 0; c.gridy = 2;
+		c.gridy = 2;
 		panel.add(statusPE, c);
 		c.gridy = 3;
 		panel.add(avgRatingPE, c);
@@ -107,6 +122,8 @@ public class MyAccount extends JFrame{
 		c.gridy = 7;
 		panel.add(avgRatingMC, c);
 		c.gridy = 8;
+		panel.add(orderHistory, c);
+		c.gridy = 9;
 		panel.add(logout, c);
 		
 		

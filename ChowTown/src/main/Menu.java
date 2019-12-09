@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -28,9 +27,14 @@ public class Menu {
 	final static int S = 1;
 	final static int MC = 2;
 	
+	final static String[] rest = {"Panda Express", "Sakura", "Masala Cafe"};
+	
+	private ArrayList<String> items = new ArrayList<String>();
+	private ArrayList<Double> prices = new ArrayList<Double>();
+	private ArrayList<Double> ratings = new ArrayList<Double>();
+	private static ArrayList<Item> cart = new ArrayList<Item>();
+	
 	private Connection conn = Main.getConnection();
-	private ArrayList<String> cart;
-	private double totalPrice;
 	
 	public JPanel createMenu(int restID) {
 		JPanel panel = new JPanel(new BorderLayout());
@@ -68,12 +72,11 @@ public class Menu {
 		JPanel panel = new JPanel(new GridBagLayout());
 		Border border = BorderFactory.createEmptyBorder(10,10,10,10);
 		GridBagConstraints c = new GridBagConstraints();
-		ArrayList<String> items = new ArrayList<String>();
-		ArrayList<Double> prices = new ArrayList<Double>();
-		ArrayList<Double> ratings = new ArrayList<Double>();
+		items.clear();
+		prices.clear();
+		ratings.clear();
+		cart.clear();
 		
-		cart = new ArrayList<String>();
-		totalPrice = 0;
 		String query = "SELECT * FROM menu WHERE rest_id = " + restID + ";";
 		try {
 			Statement stmt = conn.createStatement();
@@ -120,7 +123,6 @@ public class Menu {
 			c.gridx = 2;
 			panel.add(label,c);
 		}
-		
 		for(int i = 0; i < items.size(); i++) {
 			JLabel item = new JLabel(items.get(i));	
 			item.setBorder(border);
@@ -137,18 +139,30 @@ public class Menu {
 			rate.setFont(new Font("monospaced", Font.PLAIN, 20));
 			c.gridx = 2;
 			panel.add(rate, c);
+			
+			c.gridx = 4;
+			JLabel quantity = new JLabel("0");
+			panel.add(quantity, c);
+			quantity.setFont(new Font("monospaced", Font.PLAIN, 20));
+			
 			JButton add = new JButton("Add to Cart");
 			add.setFont(new Font("monospaced", Font.PLAIN, 20));
 			add.setPreferredSize(new Dimension(170,50));
+			final int indx = i;
 			add.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					Item item = new Item(items.get(indx), prices.get(indx));
+					cart.add(item);
+					quantity.setText(String.valueOf(Integer.parseInt(quantity.getText()) + 1));
 				}
 				
 			});
 			c.gridx = 3;
 			panel.add(add, c);
+			
+			
 			
 			JButton remove = new JButton("Remove");
 			remove.setFont(new Font("monospaced", Font.PLAIN, 20));
@@ -157,14 +171,70 @@ public class Menu {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					String name = items.get(indx);
+					for(int i = 0; i < cart.size(); i++) {
+						if(cart.get(i).getName().equals(name)) {
+							cart.remove(i);
+							quantity.setText(String.valueOf(Integer.parseInt(quantity.getText()) - 1));
+							break;
+						}
+					}
 				}
 				
 			});
-			c.gridx = 4;
+			c.gridx = 5;
 			panel.add(remove, c);
 		}
+		JButton confirm = new JButton("Confirm Order");
+		confirm.setFont(new Font("monospaced", Font.PLAIN, 30));
+		confirm.setPreferredSize(new Dimension(200,10000));
+		confirm.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for(int i = 0; i < cart.size(); i++) {
+					System.out.println(cart.get(i).getName());
+				}
+			}
+			
+		});
+		
+		c.gridx = 2; c.gridy += 1;
+		panel.add(confirm, c);
 		
 		return panel;
+	}
+	
+	public static ArrayList<Item> getCart(){
+		return cart;
+	}
+	
+	private class Item {
+		
+		private String name;
+		private double price;
+		
+		public Item(String name, double price) {
+			this.setName(name);
+			this.setPrice(price);
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public double getPrice() {
+			return price;
+		}
+
+		public void setPrice(double price) {
+			this.price = price;
+		}
+		
 	}
 
 }

@@ -13,7 +13,7 @@ CREATE TABLE customers(
 INSERT INTO customers VALUES(0, "risa", "123", "Risa", 2);
 INSERT INTO customers VALUES(1, "sumaiya", "123", "Sumaiya", 1);
 INSERT INTO customers VALUES(2, "mahin", "123", "Mahin", 2);
-INSERT INTO customers VALUES(3, "wilson", "123", "Wilson", 3);
+INSERT INTO customers VALUES(3, "wilson", "123", "Wilson", 0);
 
 DROP TABLE IF EXISTS managers;
 CREATE TABLE managers(
@@ -75,6 +75,7 @@ CREATE TABLE orders(
     cook_id int,
     deli_id int,
     order_time date,
+    approved boolean,
     FOREIGN KEY (cust_id) REFERENCES customers(id) ON DELETE CASCADE,
     FOREIGN KEY (cook_id) REFERENCES employees(id) ON DELETE CASCADE,
     FOREIGN KEY (deli_id) REFERENCES employees(id) ON DELETE CASCADE

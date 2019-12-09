@@ -1,11 +1,8 @@
 package main;
 
-import java.awt.Component;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -13,7 +10,7 @@ import javax.swing.JPanel;
 
 public class Main {
 	private static final String url = "jdbc:mysql://localhost:3306/chowtown";
-	private static final String user = "root";
+	private static final String root = "root";
 	private static final String password = "risa";
 	private static Connection conn = null;
 	
@@ -21,13 +18,14 @@ public class Main {
 	private static Restaurant restaurant;
 	private static JPanel restaurantPage;
 	private static Menu menu;
+	private static OrderConfirmation confirmation;
 	private static Login login;
-	private static MyAccount myAccount;
-	private static Customer customer;
+	private static CustomerAccount myAccount;
+	private static User user;
 
 	public static void main(String[] args) {
 		try {
-			conn = DriverManager.getConnection(url, user, password);
+			conn = DriverManager.getConnection(url, root, password);
 			init();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -67,24 +65,33 @@ public class Main {
 		frame.revalidate();
 		frame.add(menu.createMenu(restID));
 		frame.setVisible(true);
-		frame.setSize(1000, 850);
+		frame.setSize(1100, 850);
 	}
 	
 	public static void goToLogin() {
-		if(customer == null) {
+		if(user == null) {
 			login = new Login();
 			login.setVisible(true);
-		}else if(customer.isLoggedIn()) {
+		}else if(user.isLoggedIn()) {
 			JOptionPane.showMessageDialog(null,"Already logged in.");
 		}
 	}
 	
 	public static void goToMyAccount() {
-		if(customer == null)
+		if(user == null)
 			JOptionPane.showMessageDialog(null,"Please login or register.");
-		else if(customer.isLoggedIn()) {
-			myAccount = new MyAccount();
+		else if(user.getTitle() == User.CUSTOMER && user.isLoggedIn()) {
+			myAccount = new CustomerAccount();
 			myAccount.setVisible(true);
+		}
+	}
+	
+	public static void goToOrderConfirmation() {
+		if(Menu.getCart().isEmpty()) {
+			JOptionPane.showMessageDialog(null,"Your cart is empty.");
+		}else {
+			confirmation = new OrderConfirmation();
+			confirmation.setVisible(true);
 		}
 	}
 	
@@ -92,11 +99,11 @@ public class Main {
 		return conn;
 	}
 	
-	public static Customer getCustomer() {
-		return customer;
+	public static User getUser() {
+		return user;
 	}
-	public static void setCustomer(Customer c) {
-		customer = c;
+	public static void setUser(User c) {
+		user = c;
 	}
 	
 }

@@ -190,10 +190,10 @@ public class Restaurant {
 	}
 	
 	public int getStatus(int restID) {
-		Customer customer = Main.getCustomer();
+		User user = Main.getUser();
 		int status = VISITOR;
-		if(customer != null) {
-			int id = customer.getId();
+		if(user != null && user.getTitle() == User.CUSTOMER) {
+			int id = user.getId();
 			String query = "SELECT status FROM customerratings WHERE cust_id = " + id + " AND rest_id = " + restID + ";";
 			try {
 				Statement stmt = conn.createStatement();

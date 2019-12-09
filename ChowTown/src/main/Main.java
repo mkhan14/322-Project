@@ -3,6 +3,7 @@ package main;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -86,11 +87,11 @@ public class Main {
 		}
 	}
 	
-	public static void goToOrderConfirmation() {
-		if(Menu.getCart().isEmpty()) {
-			JOptionPane.showMessageDialog(null,"Your cart is empty.");
+	public static void goToOrderConfirmation(ArrayList<Menu.Item> cart) {
+		if(cart.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Your cart is empty.");
 		}else {
-			confirmation = new OrderConfirmation();
+			confirmation = new OrderConfirmation(cart);
 			confirmation.setVisible(true);
 		}
 	}

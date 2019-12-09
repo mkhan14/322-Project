@@ -74,6 +74,7 @@ CREATE TABLE orders(
     cust_id int,
     cook_id int,
     deli_id int,
+    deli_rate double,
     order_time date,
     approved boolean,
     FOREIGN KEY (cust_id) REFERENCES customers(id) ON DELETE CASCADE,
@@ -85,6 +86,7 @@ DROP TABLE IF EXISTS orderhistory;
 CREATE TABLE orderhistory(
     order_id int,
     item varchar(256),
+    rate double,
     FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
 );
 
@@ -98,7 +100,7 @@ CREATE TABLE customerratings(
     FOREIGN KEY (cust_id) REFERENCES customers(id) ON DELETE CASCADE,
     FOREIGN KEY (rest_id) REFERENCES managers(rest_id) ON DELETE CASCADE
 );
-INSERT INTO customerratings VALUES(0, 0, 5, 1, 0);
+INSERT INTO customerratings VALUES(0, 0, 5, 1, 1);
 INSERT INTO customerratings VALUES(0, 1, 5, 1, 1);
 INSERT INTO customerratings VALUES(0, 2, 5, 1, 1);
 INSERT INTO customerratings VALUES(1, 0, 5, 1, 1);
@@ -121,12 +123,12 @@ CREATE TABLE menu(
     FOREIGN KEY (rest_id) REFERENCES managers(rest_id) ON DELETE CASCADE
 );
 
-INSERT INTO menu VALUES (0, "Fried Dumplings(10)", 5.00, 5, 1), (0, "Egg Roll(2)", 3.00, 5, 1), (0, "Hot & Sour Soup", 3.00, 5, 1), 
-(0, "Wonton Soup", 4.50, 5, 1), (0, "Beef Fried Rice", 9.50, 5, 1), (0, "Chicken Chow Mein", 8.50, 5, 1), 
-(0, "Can Soda", 2.00, 5, 1), (0, "Bottle Water", 1.50, 5, 1);
-INSERT INTO menu VALUES (1, "Gyoza(6)", 6.00, 5, 1), (1, "Tempura(6)", 8.00, 5, 1), (1, "Miso Soup", 3.00, 5, 1), 
-(1, "Chicken Katsu-Don", 12.00, 5, 1), (1, "Ramen", 15.50, 5, 1), (1, "Sushi(12)", 13.00, 5, 1), (1, "Green Tea", 3.00, 5, 1), 
-(1, "Bottle Water", 1.50, 5, 1);
-INSERT INTO menu VALUES (2, "Samosa(5)", 5.00, 5, 1), (2, "Naan(2)", 2.00, 5, 1), (2, "Roti(2)", 2.00, 5, 1), 
-(2, "Chicken Tikka Masaka", 10.00, 5, 1), (2, "Saag Paneer", 12.50, 5, 1), (2, "Biryani", 11.00, 5, 1), (2, "Chai", 3.00, 5, 1), 
-(2, "Lassi", 2.50, 5, 1);
+INSERT INTO menu VALUES (0, "Fried Dumplings(10)", 5.00, 4.6, 1), (0, "Egg Roll(2)", 3.00, 3.0, 1), (0, "Hot & Sour Soup", 3.00, 4.0, 1), 
+(0, "Wonton Soup", 4.50, 5.0, 1), (0, "Beef Fried Rice", 9.50, 4, 1), (0, "Chicken Chow Mein", 8.50, 4.8, 1), 
+(0, "Can Soda", 2.00, 4.2, 1), (0, "Bottle Water", 1.50, 4.4, 1);
+INSERT INTO menu VALUES (1, "Gyoza(6)", 6.00, 3.8, 1), (1, "Tempura(6)", 8.00, 5.0, 1), (1, "Miso Soup", 3.00, 4.4, 1), 
+(1, "Chicken Katsu-Don", 12.00, 3.4, 1), (1, "Ramen", 15.50, 4.9, 1), (1, "Sushi(12)", 13.00, 4.3, 1), (1, "Green Tea", 3.00, 3.2, 1), 
+(1, "Bottle Water", 1.50, 3.5, 1);
+INSERT INTO menu VALUES (2, "Samosa(5)", 5.00, 3.2, 1), (2, "Naan(2)", 2.00, 4.4, 1), (2, "Roti(2)", 2.00, 4.7, 1), 
+(2, "Chicken Tikka Masaka", 10.00, 4.6, 1), (2, "Saag Paneer", 12.50, 4.9, 1), (2, "Biryani", 11.00, 3.9, 1), (2, "Chai", 3.00, 4.0, 1), 
+(2, "Lassi", 2.50, 3.8, 1);

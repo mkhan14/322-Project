@@ -185,16 +185,27 @@ public class Menu {
 			c.gridx = 5;
 			panel.add(remove, c);
 		}
+		
+		JButton recommendation = new JButton("Recommendations");
+		recommendation.setFont(new Font("monospaced", Font.PLAIN, 30));
+		recommendation.setPreferredSize(new Dimension(200,100));
+		recommendation.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showRecommendation(restID);
+			}
+			
+		});
+		
 		JButton confirm = new JButton("Confirm Order");
 		confirm.setFont(new Font("monospaced", Font.PLAIN, 30));
-		confirm.setPreferredSize(new Dimension(200,10000));
+		confirm.setPreferredSize(new Dimension(200,100));
 		confirm.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for(int i = 0; i < cart.size(); i++) {
-					System.out.println(cart.get(i).getName());
-				}
+				Main.goToOrderConfirmation(cart);
 			}
 			
 		});
@@ -205,11 +216,20 @@ public class Menu {
 		return panel;
 	}
 	
+	private void showRecommendation(int restID) {
+		//from database
+		//if its a visitor or the customer does not have prior more than 3 order history
+		//SELECT * FROM menu WHERE rest_id = 0 ORDER BY avg_rating DESC LIMIT 3;
+		//if customer has prior order history
+		//join orders table and orderhistory table on order_id and get top 3 item by rate
+		//get result as string and show on JOptionPane
+	}
+	
 	public static ArrayList<Item> getCart(){
 		return cart;
 	}
 	
-	private class Item {
+	public class Item {
 		
 		private String name;
 		private double price;

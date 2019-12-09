@@ -87,7 +87,8 @@ public class CustomerAccount extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				//update account content
+				//show all order histories, cancel button, rate button
 			}
 			
 		});

@@ -15,7 +15,7 @@ public class OrderConfirmation extends JFrame{
 	public OrderConfirmation(ArrayList<Menu.Item> cart) {
 		JPanel panel = new JPanel(new GridBagLayout());
 		JTextArea textArea = new JTextArea();
-		textArea.setPreferredSize(new Dimension(700, 300));
+		textArea.setPreferredSize(new Dimension(700, 600));
         textArea.setEditable(false);
         textArea.setFont(new Font("monospaced", Font.PLAIN, 20));
         double totalPrice = 0;
@@ -39,7 +39,7 @@ public class OrderConfirmation extends JFrame{
         textArea.append("You have a 10min grace period to cancel your order.\n");
         panel.add(textArea);
         
-		setSize(700,600);
+		setSize(1000,600);
 		setContentPane(panel);
 	}
 	

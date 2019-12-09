@@ -141,7 +141,7 @@ public class Login extends JFrame{
 		
 		JPanel panel = new JPanel(new GridBagLayout());
 		
-		registerAs = new JComboBox(User.titles);
+		registerAs = new JComboBox(User.titles1);
 		registerAs.setPreferredSize(new Dimension(150, 60));
 		registerAs.setFont(new Font("monospaced", Font.PLAIN, 15));
 		

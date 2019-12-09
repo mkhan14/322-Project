@@ -6,7 +6,10 @@ public class User {
 	final static int DELIVERY = 1;
 	final static int SALES = 2;
 	final static int CUSTOMER = 3;
-	final static String[] titles = {"Cook", "Delivery", "Salesperson", "Customer"};
+	final static int MANAGER = 4;
+	final static String[] titles = {"Cook", "Delivery", "Salesperson", "Manager", "Customer"};
+
+	final static String[] titles1 = {"Cook", "Delivery", "Salesperson", "Customer"};
 	
 	private int title;
 	private int id;

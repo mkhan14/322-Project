@@ -199,8 +199,8 @@ public class Menu {
 		});
 		
 		JButton confirm = new JButton("Confirm Order");
-		confirm.setFont(new Font("monospaced", Font.PLAIN, 30));
-		confirm.setPreferredSize(new Dimension(200,100));
+		confirm.setFont(new Font("monospaced", Font.PLAIN, 20));
+		confirm.setPreferredSize(new Dimension(200,60));
 		confirm.addActionListener(new ActionListener() {
 
 			@Override

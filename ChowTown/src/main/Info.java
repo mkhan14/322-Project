@@ -42,6 +42,7 @@ public class Info {
 	private ArrayList<Integer> cust_status;
 	private ArrayList<Double> cust_avg_ratings;
 	private ArrayList<Integer> cust_ids;
+	private ArrayList<Integer> numRateds;
 	
 	private ArrayList<String> employees = new ArrayList<String>();
 	private ArrayList<String> jobTitles = new ArrayList<String>();
@@ -60,9 +61,10 @@ public class Info {
 		cust_status = new ArrayList<Integer>();
 		cust_avg_ratings = new ArrayList<Double>();
 		cust_ids = new ArrayList<Integer>();
+		numRateds = new ArrayList<Integer>();
 		
 		//String query = "SELECT name,address FROM customers JOIN customerratings WHERE rest_id = " + restID + " AND cust_id = id";
-		String query = "SELECT name,address,avg_rating,status,id FROM customers JOIN customerratings WHERE rest_id = " + restID + " AND cust_id = id";
+		String query = "SELECT name,address,avg_rating,status,id,num_rated FROM customers JOIN customerratings WHERE rest_id = " + restID + " AND cust_id = id";
 		//String query1 = "SELECT avg_rating FROM customerratings JOIN customers WHERE rest_id = " + restID + " AND cust_id = id";
 		String query2 = "SELECT * FROM employees";
 		
@@ -76,6 +78,7 @@ public class Info {
 				cust_avg_ratings.add(rs.getDouble("avg_rating"));
 				cust_status.add(rs.getInt("status"));
 				cust_ids.add(rs.getInt("id"));
+				numRateds.add(rs.getInt("num_rated"));
 			}
 			
 			//Statement stmt2 = conn.createStatement();
@@ -114,7 +117,7 @@ public class Info {
 		JPanel panel = new JPanel();
 		
 		if(infoID == CI) {
-			panel.setLayout(new GridLayout(6,1));
+			panel.setLayout(new GridLayout(7,1));
 			
 			
 			JComboBox custList = new JComboBox(customers.toArray());
@@ -152,7 +155,45 @@ public class Info {
 							e1.printStackTrace();
 						}
 					}else {
-						System.out.println("nothing happened");
+						System.out.println("no blacklist occured");
+					}
+					
+				
+				}
+			});
+			
+			JButton prom_dem_Btn = new JButton("Promote/Demote This Customer");
+			panel.add(prom_dem_Btn);
+			prom_dem_Btn.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(cust_avg_ratings.get(custList.getSelectedIndex()) > 4 && cust_status.get(custList.getSelectedIndex()) == 1 && numRateds.get(custList.getSelectedIndex()) > 3) {
+						//alter row of customerrating where rating is 1 so that the status becomes 0
+						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 (this would be so that any customer with avg rating of 1 can be blacklisted)
+						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND cust_id = customers.id (idk if this will work)
+						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND cust_id = cust_ids.get(custList.getSelectedIndex());
+						//then run goToInfo
+						
+						String updateStat = "UPDATE customerratings SET status = '2' WHERE avg_rating > 4 AND num_rated > 3 AND status = 1 AND rest_id = " + restID + " AND cust_id = " + cust_ids.get(custList.getSelectedIndex());
+						try {
+							Statement stmt = conn.createStatement();
+							stmt.executeUpdate(updateStat);
+							Main.goToInfo(Info.CI);
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+					}else if(cust_avg_ratings.get(custList.getSelectedIndex()) < 2 && (custList.getSelectedIndex()) > 1 && cust_status.get(custList.getSelectedIndex()) == 1 && numRateds.get(custList.getSelectedIndex()) > 3){
+						String updateStat = "UPDATE customerratings SET status = '-1' WHERE avg_rating < 2 AND avg_rating > 1 AND num_rated > 3 AND status = 1 AND rest_id = " + restID + " AND cust_id = " + cust_ids.get(custList.getSelectedIndex());
+						try {
+							Statement stmt = conn.createStatement();
+							stmt.executeUpdate(updateStat);
+							Main.goToInfo(Info.CI);
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+					}else {
+						System.out.println("no promotion/demotion occured");
 					}
 					
 				

@@ -3,6 +3,7 @@ package main;
 import java.awt.EventQueue;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import java.awt.GridBagLayout;
@@ -226,6 +227,15 @@ public class cooks {
 		});
 		
 		JButton btnSave = new JButton("Save");
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				int[] selection = menu_items.getSelectedRows();
+//				for(int i = 0; i < selection.length; i++) {
+//					selection[i] = menu_items.convertRowIndexToModel(selection[i]);
+//				}
+				getValues();
+			}
+		});
 		
 		JButton btnDelete = new JButton("Delete");
 		
@@ -478,5 +488,37 @@ public class cooks {
 			}
 		}
 		return order_model;
+	}
+	public void updateValues(DefaultTableModel menu) {
+		int row = menu_items.getRowCount();
+		int column = menu_items.getColumnCount();
+		String[][] result = new String[row][column];
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < column; j++) {
+				result[i][j] = (String) menu_items.getModel().getValueAt(i,j);
+			}
+		}
+		Vector p_values; 
+		String[] values = new String[3];
+		for(int i = 0; i < row; i++) {
+			values = result[i];
+			p_values = menu.getDataVector();
+			String query = "update menu set item = \""+values[1]+"\", price = "+values[2]+" where item = \""++"\"";
+    		Statement stmt;
+    		try {
+    			conn = DriverManager.getConnection(url, user, password);
+    			stmt = conn.createStatement();
+    			stmt.executeUpdate(query);    			
+    		} catch(SQLException e) {
+    			e.printStackTrace();
+    		}finally {
+    			try {
+    				conn.close();
+    			} catch (SQLException e1) {
+    				e1.printStackTrace();
+    			}
+    			menu_items.setModel(refresh_menu());
+    		}
+		}
 	}
 }

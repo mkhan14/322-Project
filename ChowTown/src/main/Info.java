@@ -120,6 +120,12 @@ public class Info {
 		if(infoID == CI) {
 			panel.setLayout(new GridLayout(8,1));
 			
+			if(Main.getManager().getId() == 0)
+				panel.setBackground(new Color(255, 255, 200));
+			if(Main.getManager().getId() == 1)
+				panel.setBackground(new Color(255, 230, 245));
+			if(Main.getManager().getId() == 2)
+				panel.setBackground(new Color(240, 255, 220));
 			
 			JComboBox custList = new JComboBox(customers.toArray());
 			//custList.setSelectedIndex(0);
@@ -235,6 +241,13 @@ public class Info {
 		
 		if(infoID == EI) {
 			panel.setLayout(new GridLayout(11,1));
+			
+			if(Main.getManager().getId() == 0)
+				panel.setBackground(new Color(255, 255, 200));
+			if(Main.getManager().getId() == 1)
+				panel.setBackground(new Color(255, 230, 245));
+			if(Main.getManager().getId() == 2)
+				panel.setBackground(new Color(240, 255, 220));
 			
 			JComboBox emplList = new JComboBox(employees.toArray());
 			panel.add(emplList);

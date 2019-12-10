@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -19,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class CustomerAccount extends JFrame{
 	private Connection conn = Main.getConnection();
@@ -159,7 +161,7 @@ public class CustomerAccount extends JFrame{
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()) {
-				String id = Integer.toString(rs.getInt("order_id"));
+				int id = rs.getInt("order_id");
 				String restName = Menu.rest[rs.getInt("rest_id")];
 				Object cookID = rs.getObject("cook_id");
 				Object deliID = rs.getObject("deli_id");
@@ -183,6 +185,25 @@ public class CustomerAccount extends JFrame{
 				c.gridx = 2;
 				history.add(approval, c);
 				
+				JButton cancel = new JButton("Cancel");
+				cancel.setFont(new Font("monospaced", Font.PLAIN, 15));
+				cancel.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if(cookID == null || deliID == null) {
+							//delete from database
+						}else {
+							JOptionPane.showMessageDialog(null, "Your order has been made already and cannot be canceled.");
+						}
+						
+					}
+					
+				});
+
+				c.gridx = 3;
+				history.add(cancel, c);
+				
 				JButton rate = new JButton("Rate");
 				rate.setFont(new Font("monospaced", Font.PLAIN, 15));
 				rate.addActionListener(new ActionListener() {
@@ -192,13 +213,14 @@ public class CustomerAccount extends JFrame{
 						if(cookID == null || deliID == null) {
 							JOptionPane.showMessageDialog(null, "Your order has not been made yet.");
 						}else {
+							goToRateScreen(id, (Integer) cookID, (Integer)deliID);
 							//new window that rates the deli and every item corresponding to that order id
 							//update ratings in menu table, and employees 
 						}
 					}
 					
 				});
-				c.gridx = 3;
+				c.gridx = 4;
 				history.add(rate, c);
 			}
 
@@ -209,6 +231,90 @@ public class CustomerAccount extends JFrame{
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
+	}
+	
+	private void goToRateScreen(int orderID, int cookID, int deliID) {
+		getContentPane().removeAll();
+		repaint();
+		revalidate();
+		
+		JPanel panel = new JPanel(new GridBagLayout());
+		JLabel deli = new JLabel("Please rate the delivery person from 1-5: ");
+		JTextField deliRate = new JTextField();
+		deliRate.setPreferredSize(new Dimension(30,30));
+		c.gridx = 0; c.gridy = 0; c.insets = new Insets(10,10,10,10);
+		panel.add(deli, c);
+		c.gridx = 1;
+		panel.add(deliRate, c);
+		
+		
+		ArrayList<JTextField> inputs = new ArrayList<JTextField>();
+		ArrayList<Integer> rates = new ArrayList<Integer>();
+		String query = "SELECT item FROM orderhistory WHERE order_id = " + orderID + ";";
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				c.gridx = 0; c.gridy += 1;
+				JLabel item = new JLabel("Please rate " + rs.getString("item") + " from 1-5: ");
+				JTextField itemRate = new JTextField();
+				inputs.add(itemRate);
+				itemRate.setPreferredSize(new Dimension(30,30));
+				panel.add(item, c);
+				c.gridx = 1;
+				panel.add(itemRate,c );
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		boolean validInputs = true;
+		for(JTextField text: inputs) {
+			try{
+				int r = Integer.parseInt(text.getText());
+				if(r > 5 || r < 1) {
+					JOptionPane.showMessageDialog(null, "Please enter integer or decimal values between 1-5.");
+					validInputs = false;
+					break;
+				}
+			}catch(Exception e){
+				JOptionPane.showMessageDialog(null, "Please enter integer or decimal values.");
+				validInputs = false;
+			}
+		}
+		
+		try{
+			int r = Integer.parseInt(deliRate.getText());
+			if(r > 5 || r < 1) {
+				JOptionPane.showMessageDialog(null, "Please enter integer or decimal values between 1-5.");
+				validInputs = false;
+			}
+		}catch(Exception e){
+			JOptionPane.showMessageDialog(null, "Please enter integer or decimal values.");
+			validInputs = false;
+		}
+		
+		JButton confirmRate = new JButton("Rate");
+		confirmRate.setFont(new Font("monospaced", Font.PLAIN, 15));
+		confirmRate.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(validInputs) {
+					
+				}
+				
+			}
+			
+		});
+		
+		setSize(500, 400);
+		setContentPane(panel);
+		setVisible(true);
+	}
+	
+	private void deleteOrder() {
+		
 	}
 
 }

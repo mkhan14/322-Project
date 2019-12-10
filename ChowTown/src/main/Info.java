@@ -26,7 +26,8 @@ public class Info {
 	
 	final static int CI = 0;
 	final static int EI = 1;
-	final static int OI = 2;
+	//final static int OI = 2;
+	final static int LO = 2;
 	
 	final static String[] statString = {"BLACKLISTED", "REGISTERED ", "VIP"};
 	final static String[] jobString = {"COOK", "DELIVERY PERSON", "SALESPERSON"};
@@ -75,16 +76,12 @@ public class Info {
 		empl_ids = new ArrayList<Integer>();
 		num_warnings = new ArrayList<Integer>();
 		
-		//String query = "SELECT name,address FROM customers JOIN customerratings WHERE rest_id = " + restID + " AND cust_id = id";
 		String query = "SELECT name,address,avg_rating,status,id,num_rated FROM customers JOIN customerratings WHERE rest_id = " + restID + " AND cust_id = id";
-		//String query1 = "SELECT avg_rating FROM customerratings JOIN customers WHERE rest_id = " + restID + " AND cust_id = id";
-		//String query2 = "SELECT * FROM employees";
 		String query2 = "SELECT name,job_title,salary,avg_rating,last_three,id,warning FROM employees WHERE rest_id = " + restID;
 		
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-			//ResultSet rs1 = stmt.executeQuery(query1);
 			while(rs.next()) {
 				customers.add(rs.getString("name"));
 				addresses.add(rs.getInt("address"));
@@ -94,7 +91,6 @@ public class Info {
 				numRateds.add(rs.getInt("num_rated"));
 			}
 			
-			//Statement stmt2 = conn.createStatement();
 			ResultSet rs2 = stmt.executeQuery(query2);
 			while(rs2.next()) {
 				employees.add(rs2.getString("name"));
@@ -110,26 +106,14 @@ public class Info {
 			e.printStackTrace();
 		}
 		
-		/*try {
-			Statement stmt2 = conn.createStatement();
-			ResultSet rs2 = stmt2.executeQuery(query2);
-			while(rs2.next()) {
-				employees.add(rs2.getString("name"));
-				//prices.add(rs.getDouble("price"));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}*/
 		
+		//for testing purposes
 		for(int i = 0; i < customers.size(); i++) {
 			System.out.println(customers.get(i)); 
 		}
 		
 		
 		
-		//JPanel panel = new JPanel(new GridBagLayout());
-		//Border border = BorderFactory.createEmptyBorder(20,20,20,20);
-		//GridBagConstraints c = new GridBagConstraints();
 		JPanel panel = new JPanel();
 		
 		if(infoID == CI) {
@@ -156,11 +140,6 @@ public class Info {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if(cust_avg_ratings.get(custList.getSelectedIndex()) == 1 && cust_status.get(custList.getSelectedIndex()) != 0) {
-						//alter row of customerrating where rating is 1 so that the status becomes 0
-						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 (this would be so that any customer with avg rating of 1 can be blacklisted)
-						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND cust_id = customers.id (idk if this will work)
-						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND cust_id = cust_ids.get(custList.getSelectedIndex());
-						//then run goToInfo
 						
 						String updateStat = "UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND rest_id = " + restID + " AND cust_id = " + cust_ids.get(custList.getSelectedIndex());
 						try {
@@ -185,11 +164,6 @@ public class Info {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if(cust_avg_ratings.get(custList.getSelectedIndex()) > 4 && cust_status.get(custList.getSelectedIndex()) == 1 && numRateds.get(custList.getSelectedIndex()) > 3) {
-						//alter row of customerrating where rating is 1 so that the status becomes 0
-						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 (this would be so that any customer with avg rating of 1 can be blacklisted)
-						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND cust_id = customers.id (idk if this will work)
-						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND cust_id = cust_ids.get(custList.getSelectedIndex());
-						//then run goToInfo
 						
 						String updateStat = "UPDATE customerratings SET status = '2' WHERE avg_rating > 4 AND num_rated > 3 AND status = 1 AND rest_id = " + restID + " AND cust_id = " + cust_ids.get(custList.getSelectedIndex());
 						try {
@@ -232,22 +206,13 @@ public class Info {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					//for(int i = 0; i < addresses.size(); i++) {
-					//	System.out.println(addresses.get(i)); 
-					//}
 					
-					
-					
-					
-					//addr.setBorder(border);
 					addr.setFont(new Font("monospaced", Font.PLAIN, 20));
-					//c.gridx = 0; c.gridy = 1;
-					//panel.remove(addr);
+					
 					addr.setText("Address: Area "+ addresses.get(custList.getSelectedIndex()).toString());
 					
 					acr.setFont(new Font("monospaced", Font.PLAIN, 20));
-					//c.gridx = 0; c.gridy = 1;
-					//panel.remove(addr);
+					
 					acr.setText("Average Rating: "+ cust_avg_ratings.get(custList.getSelectedIndex()).toString());
 					
 					stat.setFont(new Font("monospaced", Font.PLAIN, 20));
@@ -384,61 +349,16 @@ public class Info {
 			
 			
 			
-			/*JButton update_salary_Btn = new JButton("Update Salary of This Employee");
-			panel.add(update_salary_Btn);
-			update_salary_Btn.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if(cust_avg_ratings.get(custList.getSelectedIndex()) > 4 && cust_status.get(custList.getSelectedIndex()) == 1 && numRateds.get(custList.getSelectedIndex()) > 3) {
-						//alter row of customerrating where rating is 1 so that the status becomes 0
-						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 (this would be so that any customer with avg rating of 1 can be blacklisted)
-						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND cust_id = customers.id (idk if this will work)
-						//UPDATE customerratings SET status = '0' WHERE avg_rating = 1 AND cust_id = cust_ids.get(custList.getSelectedIndex());
-						//then run goToInfo
-						
-						String updateStat = "UPDATE customerratings SET status = '2' WHERE avg_rating > 4 AND num_rated > 3 AND status = 1 AND rest_id = " + restID + " AND cust_id = " + cust_ids.get(custList.getSelectedIndex());
-						try {
-							Statement stmt = conn.createStatement();
-							stmt.executeUpdate(updateStat);
-							Main.goToInfo(Info.EI);
-						} catch (SQLException e1) {
-							e1.printStackTrace();
-						}
-					}else if(cust_avg_ratings.get(custList.getSelectedIndex()) < 2 && (custList.getSelectedIndex()) > 1 && cust_status.get(custList.getSelectedIndex()) == 1 && numRateds.get(custList.getSelectedIndex()) > 3){
-						String updateStat = "UPDATE customerratings SET status = '-1' WHERE avg_rating < 2 AND avg_rating > 1 AND num_rated > 3 AND status = 1 AND rest_id = " + restID + " AND cust_id = " + cust_ids.get(custList.getSelectedIndex());
-						try {
-							Statement stmt = conn.createStatement();
-							stmt.executeUpdate(updateStat);
-							Main.goToInfo(Info.EI);
-						} catch (SQLException e1) {
-							e1.printStackTrace();
-						}
-					}else {
-						System.out.println("no promotion/demotion occured");
-					}
-					
-				
-				}
-			});*/
+			
 			
 			
 			emplList.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					//for(int i = 0; i < addresses.size(); i++) {
-					//	System.out.println(addresses.get(i)); 
-					//}
 					
-					
-					
-					
-					//addr.setBorder(border);
 					jtitle.setFont(new Font("monospaced", Font.PLAIN, 20));
-					//c.gridx = 0; c.gridy = 1;
-					//panel.remove(addr);
-					//jtitle.setText("Job title: "+ jobTitles.get(emplList.getSelectedIndex()).toString());
+					
 					if(jobTitles.get(emplList.getSelectedIndex()) == 0) {
 						jtitle.setText("Job Title: " + jobString[0]);
 					}else if(jobTitles.get(emplList.getSelectedIndex()) == 1) {
@@ -463,15 +383,12 @@ public class Info {
 			});
 		}
 		
-		//if(infoID == OI){
+		//if(infoID == LO){
 			
 		//}
 		
 		return panel;
 	}
 	
-	//public static int convertStatusToString(int cs) {
-	//	
-	//}
 
 }

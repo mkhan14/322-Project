@@ -192,11 +192,11 @@ public class CustomerAccount extends JFrame{
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						if(cookID == null || deliID == null) {
-							//delete from database
+							deleteOrder(id);
+							repaint();
 						}else {
 							JOptionPane.showMessageDialog(null, "Your order has been made already and cannot be canceled.");
 						}
-						
 					}
 					
 				});
@@ -214,8 +214,6 @@ public class CustomerAccount extends JFrame{
 							JOptionPane.showMessageDialog(null, "Your order has not been made yet.");
 						}else {
 							goToRateScreen(id, (Integer) cookID, (Integer)deliID);
-							//new window that rates the deli and every item corresponding to that order id
-							//update ratings in menu table, and employees 
 						}
 					}
 					
@@ -225,7 +223,8 @@ public class CustomerAccount extends JFrame{
 			}
 
 			panel.add(history, BorderLayout.CENTER);
-
+			
+			setSize(1000, 600);
 			setContentPane(panel);
 			setVisible(true);
 		} catch (SQLException e1) {
@@ -237,19 +236,38 @@ public class CustomerAccount extends JFrame{
 		getContentPane().removeAll();
 		repaint();
 		revalidate();
+
+		JPanel panel = new JPanel(new BorderLayout());
 		
-		JPanel panel = new JPanel(new GridBagLayout());
+		ImageIcon back = new ImageIcon("images/back.png");
+		JButton backButton = new JButton(back);
+		backButton.setLocation(0, 0);
+		backButton.setSize(back.getIconWidth(), back.getIconHeight());
+		backButton.setContentAreaFilled(false);
+		backButton.setBorderPainted(false);
+		backButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showOrderHistory();
+			}
+			
+		});
+		
+		panel.add(backButton, BorderLayout.NORTH);
+		
+		JPanel history = new JPanel(new GridBagLayout());
 		JLabel deli = new JLabel("Please rate the delivery person from 1-5: ");
+		deli.setFont(new Font("monospaced", Font.PLAIN, 15));
 		JTextField deliRate = new JTextField();
 		deliRate.setPreferredSize(new Dimension(30,30));
 		c.gridx = 0; c.gridy = 0; c.insets = new Insets(10,10,10,10);
-		panel.add(deli, c);
+		history.add(deli, c);
 		c.gridx = 1;
-		panel.add(deliRate, c);
+		history.add(deliRate, c);
 		
 		
 		ArrayList<JTextField> inputs = new ArrayList<JTextField>();
-		ArrayList<Integer> rates = new ArrayList<Integer>();
 		String query = "SELECT item FROM orderhistory WHERE order_id = " + orderID + ";";
 		try {
 			Statement stmt = conn.createStatement();
@@ -257,41 +275,16 @@ public class CustomerAccount extends JFrame{
 			while(rs.next()) {
 				c.gridx = 0; c.gridy += 1;
 				JLabel item = new JLabel("Please rate " + rs.getString("item") + " from 1-5: ");
+				item.setFont(new Font("monospaced", Font.PLAIN, 15));
 				JTextField itemRate = new JTextField();
 				inputs.add(itemRate);
 				itemRate.setPreferredSize(new Dimension(30,30));
-				panel.add(item, c);
+				history.add(item, c);
 				c.gridx = 1;
-				panel.add(itemRate,c );
+				history.add(itemRate,c );
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-		
-		boolean validInputs = true;
-		for(JTextField text: inputs) {
-			try{
-				int r = Integer.parseInt(text.getText());
-				if(r > 5 || r < 1) {
-					JOptionPane.showMessageDialog(null, "Please enter integer or decimal values between 1-5.");
-					validInputs = false;
-					break;
-				}
-			}catch(Exception e){
-				JOptionPane.showMessageDialog(null, "Please enter integer or decimal values.");
-				validInputs = false;
-			}
-		}
-		
-		try{
-			int r = Integer.parseInt(deliRate.getText());
-			if(r > 5 || r < 1) {
-				JOptionPane.showMessageDialog(null, "Please enter integer or decimal values between 1-5.");
-				validInputs = false;
-			}
-		}catch(Exception e){
-			JOptionPane.showMessageDialog(null, "Please enter integer or decimal values.");
-			validInputs = false;
 		}
 		
 		JButton confirmRate = new JButton("Rate");
@@ -300,21 +293,85 @@ public class CustomerAccount extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(validInputs) {
+				if(checkInputs(inputs, deliRate)) {
+					double r = Double.parseDouble(deliRate.getText());
+					String query = "UPDATE orders SET deli_rate = " + r +" WHERE order_id = " + orderID + ";";
+					try {
+						Statement stmt = conn.createStatement();
+						stmt.executeUpdate(query);
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
 					
+					for(JTextField text: inputs) {
+						r = Double.parseDouble(text.getText());
+						query = "UPDATE orderhistory SET rate = " + r +" WHERE rate IS NULL AND order_id = " + orderID + " LIMIT 1;";
+						try {
+							Statement stmt = conn.createStatement();
+							stmt.executeUpdate(query);
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+					}
+	
 				}
 				
 			}
 			
 		});
 		
-		setSize(500, 400);
+		c.gridy += 1;
+		history.add(confirmRate, c);	
+		
+		panel.add(history, BorderLayout.CENTER);
+		setSize(600, 700);
 		setContentPane(panel);
 		setVisible(true);
 	}
 	
-	private void deleteOrder() {
+	private boolean checkInputs(ArrayList<JTextField> inputs, JTextField deliRate) {
+		boolean checkInputs = true;
+		for(JTextField text: inputs) {
+			try{
+				double r = Double.parseDouble(text.getText());
+				if(r > 5 || r < 1) {
+					JOptionPane.showMessageDialog(null, "Please enter integer or decimal values between 1-5.");
+					checkInputs = false;
+					break;
+				}
+				System.out.println("!");
+			}catch(Exception e){
+				if(checkInputs)
+					JOptionPane.showMessageDialog(null, "Please enter integer or decimal values.");
+				checkInputs = false;
+			}
+		}
+		if(checkInputs) {
+			try{
+				double r = Double.parseDouble(deliRate.getText());
+				if(r > 5 || r < 1) {
+					JOptionPane.showMessageDialog(null, "Please enter integer or decimal values between 1-5.");
+					checkInputs = false;
+				}
+			}catch(Exception e){
+				JOptionPane.showMessageDialog(null, "Please enter integer or decimal values.");
+				checkInputs = false;
+			}
+		}
 		
+		return checkInputs;
+	}
+	
+	//update rate menu items and the cook and delivery guy
+	
+	private void deleteOrder(int orderID) {
+		String query = "DELETE FROM orders WHERE order_id = " + orderID + ";";
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(query);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 }

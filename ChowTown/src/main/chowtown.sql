@@ -73,11 +73,10 @@ DROP TABLE IF EXISTS orders;
 CREATE TABLE orders(
     order_id int PRIMARY KEY,
     cust_id int,
+    rest_id int, 
     cook_id int,
     deli_id int,
     deli_rate double,
-    order_time date,
-    approved boolean,
     FOREIGN KEY (cust_id) REFERENCES customers(id) ON DELETE CASCADE,
     FOREIGN KEY (cook_id) REFERENCES employees(id) ON DELETE CASCADE,
     FOREIGN KEY (deli_id) REFERENCES employees(id) ON DELETE CASCADE

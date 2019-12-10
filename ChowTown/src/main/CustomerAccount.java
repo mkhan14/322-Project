@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -12,17 +13,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class CustomerAccount extends JFrame{
 	private Connection conn = Main.getConnection();
 	private GridBagConstraints c = new GridBagConstraints();
+	private User customer;
 	
 	public CustomerAccount() {
-		User customer = Main.getUser();
+		customer = Main.getUser();
 		int addrsID = -1;
 		String statPE = "";
 		double ratingPE = 0;
@@ -81,8 +85,7 @@ public class CustomerAccount extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//update account content
-				//show all order histories, cancel button, rate button
+				showOrderHistory();
 			}
 			
 		});
@@ -124,6 +127,88 @@ public class CustomerAccount extends JFrame{
 		
 		setSize(600, 600);
 		setContentPane(panel);
+	}
+	
+	private void showOrderHistory() {
+		getContentPane().removeAll();
+		repaint();
+		revalidate();
+
+		JPanel panel = new JPanel(new BorderLayout());
+		ImageIcon back = new ImageIcon("images/back.png");
+		JButton backButton = new JButton(back);
+		backButton.setLocation(0, 0);
+		backButton.setSize(back.getIconWidth(), back.getIconHeight());
+		backButton.setContentAreaFilled(false);
+		backButton.setBorderPainted(false);
+		backButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Main.goToMyAccount();
+			}
+			
+		});
+		panel.add(backButton, BorderLayout.NORTH);
+		
+		JPanel history = new JPanel(new GridBagLayout());
+		c.gridy = -1; c.insets = new Insets(10,10,10,10);
+		
+		String query = "SELECT * FROM orders WHERE cust_id = " + customer.getId();
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				String id = Integer.toString(rs.getInt("order_id"));
+				String restName = Menu.rest[rs.getInt("rest_id")];
+				Object cookID = rs.getObject("cook_id");
+				Object deliID = rs.getObject("deli_id");
+				
+				JLabel orderID = new JLabel("Order ID: " + id);
+				orderID.setFont(new Font("monospaced", Font.PLAIN, 15));
+				c.gridx = 0; c.gridy += 1;
+				history.add(orderID, c);
+				
+				JLabel rest = new JLabel("Restaurant: " + restName);
+				rest.setFont(new Font("monospaced", Font.PLAIN, 15));
+				c.gridx = 1;
+				history.add(rest, c);
+				
+				JLabel approval = new JLabel();
+				approval.setFont(new Font("monospaced", Font.PLAIN, 15));
+				if(cookID == null || deliID == null)
+					approval.setText("NOT COMPLETED");
+				else
+					approval.setText("COMPLETED");
+				c.gridx = 2;
+				history.add(approval, c);
+				
+				JButton rate = new JButton("Rate");
+				rate.setFont(new Font("monospaced", Font.PLAIN, 15));
+				rate.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if(cookID == null || deliID == null) {
+							JOptionPane.showMessageDialog(null, "Your order has not been made yet.");
+						}else {
+							//new window that rates the deli and every item corresponding to that order id
+							//update ratings in menu table, and employees 
+						}
+					}
+					
+				});
+				c.gridx = 3;
+				history.add(rate, c);
+			}
+
+			panel.add(history, BorderLayout.CENTER);
+
+			setContentPane(panel);
+			setVisible(true);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 }

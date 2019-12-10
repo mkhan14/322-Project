@@ -30,6 +30,7 @@ public class OrderConfirmation extends JFrame{
         order = new Hashtable<String, Integer>();
         
         int orderID = createOrder(restID);
+        textArea.append("Your order ID is: " + orderID + "\n");
         for(Menu.Item i : cart) {
         	if(Main.getUser() != null)
         		addItemsToOrder(i, orderID);

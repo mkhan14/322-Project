@@ -18,6 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
@@ -187,8 +188,8 @@ public class Menu {
 		}
 		
 		JButton recommendation = new JButton("Recommendations");
-		recommendation.setFont(new Font("monospaced", Font.PLAIN, 30));
-		recommendation.setPreferredSize(new Dimension(200,100));
+		recommendation.setFont(new Font("monospaced", Font.PLAIN, 20));
+		recommendation.setPreferredSize(new Dimension(200,60));
 		recommendation.addActionListener(new ActionListener() {
 
 			@Override
@@ -197,6 +198,8 @@ public class Menu {
 			}
 			
 		});
+		c.gridx = 1; c.gridy += 1;
+		panel.add(recommendation, c);
 		
 		JButton confirm = new JButton("Confirm Order");
 		confirm.setFont(new Font("monospaced", Font.PLAIN, 20));
@@ -205,24 +208,70 @@ public class Menu {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Main.goToOrderConfirmation(cart);
+				Main.goToOrderConfirmation(cart, restID);
 			}
 			
 		});
 		
-		c.gridx = 2; c.gridy += 1;
+		c.gridx = 2;
 		panel.add(confirm, c);
 		
 		return panel;
 	}
 	
 	private void showRecommendation(int restID) {
-		//from database
-		//if its a visitor or the customer does not have prior more than 3 order history
-		//SELECT * FROM menu WHERE rest_id = 0 ORDER BY avg_rating DESC LIMIT 3;
-		//if customer has prior order history
-		//join orders table and orderhistory table on order_id and get top 3 item by rate
-		//get result as string and show on JOptionPane
+		String recommend = "";
+		String query = "SELECT item, avg_rating FROM menu WHERE rest_id = " + restID + " ORDER BY avg_rating DESC LIMIT 3;";
+		String query1 = "SELECT COUNT(*) FROM orders WHERE cust_id = " + Main.getUser().getId() + ";";
+		String query2 = "SELECT item, rate FROM orders JOIN orderhistory WHERE orders.order_id = orderhistory.order_id AND "
+				+ "rest_id = " + restID + " AND cust_id = " + Main.getUser().getId() + " ORDER BY rate DESC LIMIT 3;";
+		if(Main.getUser() == null) {
+			try {
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(query);
+				while(rs.next()) {
+					recommend += rs.getString("item") + "        Rate: " + rs.getDouble("avg_rating") + "\n";
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			JOptionPane.showMessageDialog(null, recommend);
+		}else if(Main.getUser().getTitle() == User.CUSTOMER) {
+			int count = 0;
+			try {
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(query1);
+				while(rs.next()) {
+					count = rs.getInt("COUNT(*)");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			if(count >= 3) {
+				try {
+					Statement stmt = conn.createStatement();
+					ResultSet rs = stmt.executeQuery(query2);
+					while(rs.next()) {
+						recommend += rs.getString("item") + "        Rate: " + rs.getDouble("rate") + "\n";
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				JOptionPane.showMessageDialog(null, recommend);
+			}else {
+				try {
+					Statement stmt = conn.createStatement();
+					ResultSet rs = stmt.executeQuery(query);
+					while(rs.next()) {
+						recommend += rs.getString("item") + "        Rate: " + rs.getDouble("avg_rating") + "\n";
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				JOptionPane.showMessageDialog(null, recommend);
+			}
+			
+		}
 	}
 	
 	public static ArrayList<Item> getCart(){
@@ -230,7 +279,7 @@ public class Menu {
 	}
 	
 	public class Item {
-		
+
 		private String name;
 		private double price;
 		
@@ -254,7 +303,7 @@ public class Menu {
 		public void setPrice(double price) {
 			this.price = price;
 		}
-		
+
 	}
 
 }

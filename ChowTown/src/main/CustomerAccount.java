@@ -21,11 +21,6 @@ public class CustomerAccount extends JFrame{
 	private Connection conn = Main.getConnection();
 	private GridBagConstraints c = new GridBagConstraints();
 	
-	final static int AREA0 = 0;
-	final static int AREA1 = 1;
-	final static int AREA2 = 2;
-	final static String[] areas = {"AREA0", "AREA1", "AREA2"};
-
 	public CustomerAccount() {
 		User customer = Main.getUser();
 		int addrsID = -1;
@@ -38,22 +33,21 @@ public class CustomerAccount extends JFrame{
 
 		String query = "SELECT address, rest_id, avg_rating, status FROM customers JOIN customerratings WHERE id = " + customer.getId() 
 				+ " AND cust_id = " + customer.getId() + ";";
-		System.out.println(customer.getId());
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()) {
 				addrsID = rs.getInt("address");
 				if(rs.getInt("rest_id") == Menu.PE) {
-					statPE = Restaurant.STATUS[rs.getInt("status")];
+					statPE = User.STATUS[rs.getInt("status")];
 					ratingPE = rs.getDouble("avg_rating");
 				}
 				if(rs.getInt("rest_id") == Menu.S) {
-					statS = Restaurant.STATUS[rs.getInt("status")];
+					statS = User.STATUS[rs.getInt("status")];
 					ratingS = rs.getDouble("avg_rating");
 				}
 				if(rs.getInt("rest_id") == Menu.MC) {
-					statMC = Restaurant.STATUS[rs.getInt("status")];
+					statMC = User.STATUS[rs.getInt("status")];
 					ratingMC = rs.getDouble("avg_rating");
 				}
 					
@@ -65,7 +59,7 @@ public class CustomerAccount extends JFrame{
 		JPanel panel = new JPanel(new GridBagLayout());
 		JLabel name = new JLabel("Name: " + customer.getName());
 		name.setFont(new Font("monospaced", Font.PLAIN, 20));
-		JLabel address = new JLabel("Address: "+ areas[addrsID]);
+		JLabel address = new JLabel("Address: "+ User.AREAS[addrsID]);
 		address.setFont(new Font("monospaced", Font.PLAIN, 20));
 		JLabel statusPE = new JLabel("Status for Panda Express: "+statPE);
 		statusPE.setFont(new Font("monospaced", Font.PLAIN, 20));

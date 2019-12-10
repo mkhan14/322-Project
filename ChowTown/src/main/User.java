@@ -7,9 +7,20 @@ public class User {
 	final static int SALES = 2;
 	final static int CUSTOMER = 3;
 	final static int MANAGER = 4;
-	final static String[] titles = {"Cook", "Delivery", "Salesperson", "Manager", "Customer"};
+	final static String[] TITLES = {"Cook", "Delivery", "Salesperson", "Customer", "Manager"};
+	final static String[] TITLES1 = {"Cook", "Delivery", "Salesperson", "Customer"};
+	
+	//user is seen as a visitor if there are no user object created. user == null 
+	final static int BLACKLIST = 0;
+	final static int REGISTERED = 1;
+	final static int VIP = 2;
+	final static String[] STATUS = {"BLACKLISTED", "REGISTERED ", "VIP"};
+	
+	final static int AREA0 = 0;
+	final static int AREA1 = 1;
+	final static int AREA2 = 2;
+	final static String[] AREAS = {"AREA0", "AREA1", "AREA2"};
 
-	final static String[] titles1 = {"Cook", "Delivery", "Salesperson", "Customer"};
 	
 	private int title;
 	private int id;

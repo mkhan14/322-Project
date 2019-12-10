@@ -23,13 +23,6 @@ public class Restaurant {
 	private Connection conn = Main.getConnection();
 	private GridBagConstraints c = new GridBagConstraints();
 	
-	final static int VISITOR = -1;
-	final static int BLACKLIST = 0;
-	final static int REGISTERED = 1;
-	final static int VIP = 2;
-	
-	final static String[] STATUS = {"BLACKLISTED", "REGISTERED ", "VIP"};
-	
 	public JPanel createPage() {
 		JPanel panel = new JPanel(new BorderLayout());
 		
@@ -184,14 +177,14 @@ public class Restaurant {
 	
 	private boolean isBlacklisted(int restID) {
 		int status = getStatus(restID);
-		if(status == BLACKLIST)
+		if(status == User.BLACKLIST)
 			return true;
 		return false;
 	}
 	
 	public int getStatus(int restID) {
 		User user = Main.getUser();
-		int status = VISITOR;
+		int status = -1;
 		if(user != null && user.getTitle() == User.CUSTOMER) {
 			int id = user.getId();
 			String query = "SELECT status FROM customerratings WHERE cust_id = " + id + " AND rest_id = " + restID + ";";

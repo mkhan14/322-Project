@@ -87,11 +87,11 @@ public class Main {
 		}
 	}
 	
-	public static void goToOrderConfirmation(ArrayList<Menu.Item> cart) {
+	public static void goToOrderConfirmation(ArrayList<Menu.Item> cart, int id) {
 		if(cart.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Your cart is empty.");
 		}else {
-			confirmation = new OrderConfirmation(cart);
+			confirmation = new OrderConfirmation(cart, id);
 			confirmation.setVisible(true);
 		}
 	}

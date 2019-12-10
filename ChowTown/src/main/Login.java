@@ -36,7 +36,7 @@ public class Login extends JFrame{
 	public Login() {
 		JPanel panel = new JPanel(new GridBagLayout());
 		
-		registerAs = new JComboBox(User.titles);
+		registerAs = new JComboBox(User.TITLES);
 		registerAs.setPreferredSize(new Dimension(150, 60));
 		registerAs.setFont(new Font("monospaced", Font.PLAIN, 15));
 		
@@ -102,8 +102,11 @@ public class Login extends JFrame{
 		String query = "";
 		if(title == User.CUSTOMER)
 			query = "SELECT COUNT(*), id, name FROM customers WHERE username = '" + username + "' AND password = '" + password + "';";
-		else
+		else if(title == User.MANAGER){
+			query = "SELECT COUNT(*), rest_id, name FROM managers WHERE username = '" + username + "' AND password = '" + password + "';";
+		}else{
 			query = "SELECT COUNT(*), id, name FROM employees WHERE username = '" + username + "' AND password = '" + password + "';";
+		}
 		int count = 0;
 		int id = -1;
 		String name = "";
@@ -128,6 +131,8 @@ public class Login extends JFrame{
 				Main.setUser(new User(User.DELIVERY, id, name, true));
 			if(title == User.SALES)
 				Main.setUser(new User(User.SALES, id, name, true));
+			if(title == User.MANAGER)
+				Main.setUser(new User(User.MANAGER, id, name, true));
 			dispose();
 		}else {
 			message.setText("Account does not exist.");
@@ -141,7 +146,7 @@ public class Login extends JFrame{
 		
 		JPanel panel = new JPanel(new GridBagLayout());
 		
-		registerAs = new JComboBox(User.titles1);
+		registerAs = new JComboBox(User.TITLES1);
 		registerAs.setPreferredSize(new Dimension(150, 60));
 		registerAs.setFont(new Font("monospaced", Font.PLAIN, 15));
 		
@@ -160,7 +165,7 @@ public class Login extends JFrame{
 		passwordField = new JPasswordField(15);
 		JLabel address = new JLabel("Address:");
 		address.setFont(new Font("monospaced", Font.PLAIN, 20));
-		area = new JComboBox(CustomerAccount.areas);
+		area = new JComboBox(User.AREAS);
 		area.setPreferredSize(new Dimension(150, 60));
 		area.setFont(new Font("monospaced", Font.PLAIN, 15));
 		message = new JLabel();

@@ -50,6 +50,8 @@ public class Info {
 	private ArrayList<Double> salaries;
 	private ArrayList<Double> empl_avg_ratings;
 	private ArrayList<Double> lThree;
+	private ArrayList<Integer> empl_ids;
+	private ArrayList<Integer> num_warnings;
 	
 	private static Manager manager;
 	
@@ -70,12 +72,14 @@ public class Info {
 		salaries = new ArrayList<Double>();
 		empl_avg_ratings = new ArrayList<Double>();
 		lThree = new ArrayList<Double>();
+		empl_ids = new ArrayList<Integer>();
+		num_warnings = new ArrayList<Integer>();
 		
 		//String query = "SELECT name,address FROM customers JOIN customerratings WHERE rest_id = " + restID + " AND cust_id = id";
 		String query = "SELECT name,address,avg_rating,status,id,num_rated FROM customers JOIN customerratings WHERE rest_id = " + restID + " AND cust_id = id";
 		//String query1 = "SELECT avg_rating FROM customerratings JOIN customers WHERE rest_id = " + restID + " AND cust_id = id";
 		//String query2 = "SELECT * FROM employees";
-		String query2 = "SELECT name,job_title,salary,avg_rating,last_three FROM employees WHERE rest_id = " + restID;
+		String query2 = "SELECT name,job_title,salary,avg_rating,last_three,id,warning FROM employees WHERE rest_id = " + restID;
 		
 		try {
 			Statement stmt = conn.createStatement();
@@ -98,6 +102,8 @@ public class Info {
 				salaries.add(rs2.getDouble("salary"));
 				empl_avg_ratings.add(rs2.getDouble("avg_rating"));
 				lThree.add(rs2.getDouble("last_three"));
+				empl_ids.add(rs2.getInt("id"));
+				num_warnings.add(rs2.getInt("warning"));
 			}
 			
 		} catch (SQLException e) {
@@ -127,7 +133,7 @@ public class Info {
 		JPanel panel = new JPanel();
 		
 		if(infoID == CI) {
-			panel.setLayout(new GridLayout(7,1));
+			panel.setLayout(new GridLayout(8,1));
 			
 			
 			JComboBox custList = new JComboBox(customers.toArray());
@@ -210,6 +216,17 @@ public class Info {
 				}
 			});
 			
+			JButton backBtn = new JButton("Back");
+			panel.add(backBtn);
+			backBtn.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Main.goToManagerPage();
+				}
+				
+			});
+			
 			
 			custList.addActionListener(new ActionListener() {
 
@@ -251,7 +268,7 @@ public class Info {
 		}
 		
 		if(infoID == EI) {
-			panel.setLayout(new GridLayout(5,1));
+			panel.setLayout(new GridLayout(11,1));
 			
 			JComboBox emplList = new JComboBox(employees.toArray());
 			panel.add(emplList);
@@ -268,6 +285,104 @@ public class Info {
 			
 			JLabel lastThreeLabel = new JLabel("");
 			panel.add(lastThreeLabel);
+			
+			JLabel warnLabel = new JLabel("");
+			panel.add(warnLabel);
+			
+			JButton warnBtn = new JButton("Warn Employee");
+			panel.add(warnBtn);
+			warnBtn.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+						String warnEmpl = "UPDATE employees SET warning = " + (num_warnings.get(emplList.getSelectedIndex()) + 1) + " WHERE rest_id = " + restID + " AND id = " + empl_ids.get(emplList.getSelectedIndex());
+						try {
+							Statement stmt = conn.createStatement();
+							stmt.executeUpdate(warnEmpl);
+							Main.goToInfo(Info.EI);
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+				
+			}
+			});
+			
+			JButton fireBtn = new JButton("Fire Employee");
+			panel.add(fireBtn);
+			fireBtn.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(num_warnings.get(emplList.getSelectedIndex()) > 3 && jobTitles.get(emplList.getSelectedIndex()) != 2) {
+						String fireEmpl = "DELETE FROM employees WHERE warning > 3 AND job_title <> 2 AND rest_id = " + restID + " AND id = " + empl_ids.get(emplList.getSelectedIndex());
+						try {
+							Statement stmt = conn.createStatement();
+							stmt.executeUpdate(fireEmpl);
+							Main.goToInfo(Info.EI);
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+					}else if(num_warnings.get(emplList.getSelectedIndex()) == 3 && jobTitles.get(emplList.getSelectedIndex()) == 2){
+						String fireEmpl = "DELETE FROM employees WHERE warning > 3 AND job_title = 2 AND rest_id = " + restID + " AND id = " + empl_ids.get(emplList.getSelectedIndex());
+						try {
+							Statement stmt = conn.createStatement();
+							stmt.executeUpdate(fireEmpl);
+							Main.goToInfo(Info.EI);
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+					}else {
+						System.out.println("No firing occurred");
+					}
+				
+			}
+			});
+			
+			
+			JButton increase_sal_Btn = new JButton("Increase Salary of Employee");
+			panel.add(increase_sal_Btn);
+			increase_sal_Btn.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+						String raiseEmpl = "UPDATE employees SET salary = " + (salaries.get(emplList.getSelectedIndex()) * 1.10) + " WHERE rest_id = " + restID + " AND id = " + empl_ids.get(emplList.getSelectedIndex());
+						try {
+							Statement stmt = conn.createStatement();
+							stmt.executeUpdate(raiseEmpl);
+							Main.goToInfo(Info.EI);
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+				
+			}
+			});
+			
+			JButton decrease_sal_Btn = new JButton("Decrease Salary of Employee");
+			panel.add(decrease_sal_Btn);
+			decrease_sal_Btn.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+						String cutEmpl = "UPDATE employees SET salary = " + (salaries.get(emplList.getSelectedIndex()) * .90) + " WHERE rest_id = " + restID + " AND id = " + empl_ids.get(emplList.getSelectedIndex());
+						try {
+							Statement stmt = conn.createStatement();
+							stmt.executeUpdate(cutEmpl);
+							Main.goToInfo(Info.EI);
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+				
+			}
+			});
+			
+			JButton backBtn = new JButton("Back");
+			panel.add(backBtn);
+			backBtn.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Main.goToManagerPage();
+				}
+				
+			});
+			
+			
 			
 			/*JButton update_salary_Btn = new JButton("Update Salary of This Employee");
 			panel.add(update_salary_Btn);
@@ -340,6 +455,9 @@ public class Info {
 					
 					lastThreeLabel.setFont(new Font("monospaced", Font.PLAIN, 20));
 					lastThreeLabel.setText("Last Three Ratings Average: "+ lThree.get(emplList.getSelectedIndex()).toString());
+					
+					warnLabel.setFont(new Font("monospaced", Font.PLAIN, 20));
+					warnLabel.setText("Warnings: "+ num_warnings.get(emplList.getSelectedIndex()).toString());
 				
 				}
 			});

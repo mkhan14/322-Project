@@ -46,8 +46,10 @@ public class ManagerPage {
 		});
 	   panel.add(employeeBtn);
 	   
-	   JButton orderBtn = new JButton("View Order Info");
-	   panel.add(orderBtn);
+	   //JButton orderBtn = new JButton("View Order Info");
+	   //panel.add(orderBtn);
+	   JButton logoutBtn = new JButton("Logout");
+	   panel.add(logoutBtn);
 	   
 	   return panel;
 	}

@@ -68,6 +68,7 @@ public class Info {
 		cust_ids = new ArrayList<Integer>();
 		numRateds = new ArrayList<Integer>();
 		
+		
 		employees = new ArrayList<String>();
 		jobTitles = new ArrayList<Integer>();
 		salaries = new ArrayList<Double>();

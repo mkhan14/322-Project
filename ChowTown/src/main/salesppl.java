@@ -9,10 +9,14 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
 import java.awt.Font;
+import java.awt.CardLayout;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class salesppl {
 
 	private JFrame frame;
+	private JTable table;
 
 	/**
 	 * Launch the application.
@@ -63,22 +67,36 @@ public class salesppl {
 		);
 		
 		JPanel Supplies = new JPanel();
+		parent.setLayout(new CardLayout(0, 0));
 		
 		JPanel MyAccount = new JPanel();
-		GroupLayout gl_parent = new GroupLayout(parent);
-		gl_parent.setHorizontalGroup(
-			gl_parent.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_parent.createSequentialGroup()
-					.addComponent(MyAccount, GroupLayout.PREFERRED_SIZE, 655, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(Supplies, GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE))
+		parent.add(MyAccount, "name_313985598329700");
+		parent.add(Supplies, "name_313985649504000");
+		
+		JScrollPane scrollPane = new JScrollPane();
+		
+		JButton btnAdd = new JButton("Add");
+		btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		GroupLayout gl_Supplies = new GroupLayout(Supplies);
+		gl_Supplies.setHorizontalGroup(
+			gl_Supplies.createParallelGroup(Alignment.LEADING)
+				.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 656, GroupLayout.PREFERRED_SIZE)
+				.addGroup(gl_Supplies.createSequentialGroup()
+					.addGap(130)
+					.addComponent(btnAdd))
 		);
-		gl_parent.setVerticalGroup(
-			gl_parent.createParallelGroup(Alignment.LEADING)
-				.addComponent(Supplies, GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
-				.addComponent(MyAccount, GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+		gl_Supplies.setVerticalGroup(
+			gl_Supplies.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_Supplies.createSequentialGroup()
+					.addGap(2)
+					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 252, GroupLayout.PREFERRED_SIZE)
+					.addGap(7)
+					.addComponent(btnAdd))
 		);
-		parent.setLayout(gl_parent);
+		
+		table = new JTable();
+		scrollPane.setColumnHeaderView(table);
+		Supplies.setLayout(gl_Supplies);
 		
 		JButton btnVieweditSupplies = new JButton("View/Edit Supplies");
 		btnVieweditSupplies.setFont(new Font("Tahoma", Font.PLAIN, 16));

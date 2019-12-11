@@ -374,9 +374,6 @@ public class cooks {
 		);
 		orders.setLayout(gl_orders);
 		
-		JPanel cancel_order = new JPanel();
-		parent.add(cancel_order, "name_217724233392200");
-		
 		JPanel myaccount = new JPanel();
 		parent.add(myaccount, "name_217765106836000");
 		
@@ -577,8 +574,6 @@ public class cooks {
 			}
 		});
 		
-		JButton btnCancelledOrders = new JButton("Cancelled Orders");
-		
 		JButton btnMyAccount = new JButton("My Account");
 		btnMyAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -611,39 +606,35 @@ public class cooks {
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel.createSequentialGroup()
-					.addGap(99)
+					.addGap(94)
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnSetMenuItems, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
 						.addComponent(btnViewSupplies, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE))
 					.addGap(86)
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panel.createSequentialGroup()
-							.addComponent(btnViewOrders, GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
-							.addGap(83))
-						.addGroup(gl_panel.createSequentialGroup()
-							.addComponent(btnCancelledOrders)
-							.addPreferredGap(ComponentPlacement.RELATED)))
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING, false)
-						.addComponent(btnMyAccount, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(btnLogOut, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE))
-					.addGap(99))
+						.addComponent(btnMyAccount, GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+						.addComponent(btnViewOrders, GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE))
+					.addGap(79)
+					.addComponent(btnLogOut, GroupLayout.PREFERRED_SIZE, 147, GroupLayout.PREFERRED_SIZE)
+					.addGap(93))
 		);
 		gl_panel.setVerticalGroup(
-			gl_panel.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, gl_panel.createSequentialGroup()
+			gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
 					.addGap(23)
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnSetMenuItems, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_panel.createSequentialGroup()
-							.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
-								.addComponent(btnViewOrders, GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
-								.addComponent(btnMyAccount, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnViewSupplies, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE))
-							.addGap(28)
-							.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING, false)
-								.addComponent(btnCancelledOrders, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnLogOut, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE))))
-					.addGap(23))
+							.addPreferredGap(ComponentPlacement.RELATED, 1, GroupLayout.PREFERRED_SIZE)
+							.addComponent(btnLogOut, GroupLayout.PREFERRED_SIZE, 98, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+							.addComponent(btnSetMenuItems, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE)
+							.addGroup(gl_panel.createSequentialGroup()
+								.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+									.addComponent(btnViewOrders, GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+									.addComponent(btnViewSupplies, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE))
+								.addGap(28)
+								.addComponent(btnMyAccount, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))))
+					.addGap(21))
 		);
 		panel.setLayout(gl_panel);
 		frmCooks.getContentPane().setLayout(groupLayout);

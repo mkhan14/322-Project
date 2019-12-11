@@ -1,8 +1,18 @@
 package main;
 
-import java.util.Random; 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.Random;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel; 
 
 public class FindRoute {
+
+	private static String [] areas = {"CHOWTOWN", "A", "B", "C"};
 	
 	public static int[] dijkstra(int src) {
 		//generate random "traffic":
@@ -13,20 +23,33 @@ public class FindRoute {
 		int D = rand.nextInt(10);
 		int E = rand.nextInt(10);
 		int F = rand.nextInt(10);
-		int G = rand.nextInt(10);
-		int H = rand.nextInt(10);
-		int I = rand.nextInt(10);
-		int J = rand.nextInt(10);
-		int K = rand.nextInt(10);
-		int L = rand.nextInt(10);
 		
 		//traffic from the corresponding node (0) to other nodes 
 		int graph[][] = new int[][] {
 			{0,A,B,C},				//traffic from ChowTown to :   Chowtown = 0; A = a; B = b; C = c
-			{D,0,E,F},				//traffic from A to:           Chowtown = d; A = 0; B = e; C = f
-			{G,H,0,I},				//traffic from B to:		   Chowtown = g; A = h; B = 0; C = i
-			{J,K,L,0}				//traffic from C to:		   Chowtown = j; A = k; B = l; C = 0
+			{A,0,D,E},				//traffic from A to:           Chowtown = d; A = 0; B = e; C = f
+			{B,D,0,F},				//traffic from B to:		   Chowtown = g; A = h; B = 0; C = i
+			{C,E,F,0}				//traffic from C to:		   Chowtown = j; A = k; B = l; C = 0
 		};
+
+		JFrame routes = new JFrame();
+		JPanel panel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets = new Insets(5,5,5,5);
+		String s = "";
+		for(int row = 0; row < graph.length; row++) {
+			for(int col = 0; col < graph.length; col++) {
+				if(row != col) {
+					s = "From " + areas[row] + " to " + areas[col] + " is " + graph[row][col];
+					JLabel label = new JLabel(s);
+					c.gridy += 1;
+					panel.add(label, c);	
+				}
+			}
+		}
+		routes.add(panel);
+		routes.setVisible(true);
+		routes.setSize(300,500);
 		
 		int traffic[] = new int[4]; //traffic from chowtown to other areas
 		boolean visited[] = new boolean [4];

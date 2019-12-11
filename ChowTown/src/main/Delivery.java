@@ -31,7 +31,8 @@ public class Delivery extends JFrame{
 	private GridBagConstraints c = new GridBagConstraints();
 	private User delivery;
 	private JTextField amount;
-
+	private String [] areas = {"CHOWTOWN", "A", "B", "C"};
+	
 	public Delivery() {
 		createPage();
 	}
@@ -73,19 +74,21 @@ public class Delivery extends JFrame{
 		JPanel footers = new JPanel(new GridLayout(6, 1));
 		Border border = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 		
+		int[] t = FindRoute.dijkstra(0);
+		
 		JLabel traffic = new JLabel("Today's Traffic:");
 		traffic.setFont(new Font("monospaced", Font.BOLD, 30));
 		traffic.setBorder(border);
 		footers.add(traffic);
-		JLabel toArea0 = new JLabel("The Traffic to A: " + FindRoute.dijkstra(0)[1]);
+		JLabel toArea0 = new JLabel("The Traffic to A: " + t[1]);
 		toArea0.setFont(new Font("monospaced", Font.PLAIN, 20));
 		toArea0.setBorder(border);
 		footers.add(toArea0);
-		JLabel toArea1 = new JLabel("The Traffic to B: "+ FindRoute.dijkstra(0)[2]);
+		JLabel toArea1 = new JLabel("The Traffic to B: "+ t[2]);
 		toArea1.setFont(new Font("monospaced", Font.PLAIN, 20));
 		toArea1.setBorder(border);
 		footers.add(toArea1);
-		JLabel toArea2 = new JLabel("The Traffic to C: "+ FindRoute.dijkstra(0)[3]);
+		JLabel toArea2 = new JLabel("The Traffic to C: "+ t[3]);
 		toArea2.setFont(new Font("monospaced", Font.PLAIN, 20));
 		toArea2.setBorder(border);
 		footers.add(toArea2);

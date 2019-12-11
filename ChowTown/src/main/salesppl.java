@@ -36,10 +36,10 @@ public class salesppl {
 	private static final String url = "jdbc:mysql://localhost:3306/chowtown";
 	private static final String user = "root";
 	private static final String password = "Love9420516@";
-	private static Connection conn = null;
+	private Connection conn = Main.getConnection();
 	private int selectedRow;
 	private String[][] menu_val;
-	private int index = 0, ck_id = 12;
+	private int index = 0, ck_id =Main.getUser().getId();
 	private JTextField txtSalary;
 	private JTextField txtName;
 	private JTextField txtID;
@@ -47,25 +47,6 @@ public class salesppl {
 	private JTextField txtRestaurant;
 	private JTextField txtTitle;
 	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					salesppl window = new salesppl();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the application.
-	 */
 	public salesppl() {
 		initialize();
 	}
@@ -77,6 +58,7 @@ public class salesppl {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 673, 436);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
 		
 		JPanel menu = new JPanel();
 		
@@ -250,19 +232,12 @@ public class salesppl {
 		    		String query = "insert into supplies values(" + id + ", 0, '" + field1.getText().toString()+"', "+Float.parseFloat(field2.getText().toString())+")";
 		    		Statement stmt;
 		    		try {
-		    			conn = DriverManager.getConnection(url, user, password);
 		    			stmt = conn.createStatement();
 		    			stmt.executeUpdate(query);    			
 		    		} catch(SQLException e) {
 		    			e.printStackTrace();
-		    		}finally {
-		    			try {
-		    				conn.close();
-		    			} catch (SQLException e1) {
-		    				e1.printStackTrace();
-		    			}
-		    			supply.setModel(refresh_supply());
 		    		}
+		    			supply.setModel(refresh_supply());
 		        } else {
 		            
 		        }
@@ -333,6 +308,16 @@ public class salesppl {
 		btnVieweditSupplies.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		JButton btnLogOut = new JButton("Log out");
+		btnLogOut.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Main.setUser(null);
+				Main.goToRestaurantPage();
+				frame.dispose();
+			}
+			
+		});
 		btnLogOut.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		JButton btnMyAccount = new JButton("My Account");
@@ -400,7 +385,6 @@ public class salesppl {
 		String query = "Select * from supplies";
 		Statement stmt;
 		try {
-			conn = DriverManager.getConnection(url, user, password);
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()) {
@@ -409,12 +393,6 @@ public class salesppl {
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
-		}finally {
-			try {
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 		}
 		return supply_model;
 	}
@@ -423,17 +401,10 @@ public class salesppl {
 			String query = "update supplies set price = " + supply.getValueAt(i,2)+" where id = " + supply.getValueAt(i,0);
     		Statement stmt;
     		try {
-    			conn = DriverManager.getConnection(url, user, password);
     			stmt = conn.createStatement();
     			stmt.executeUpdate(query);
     		} catch(SQLException e) {
     			e.printStackTrace();
-    		}finally {
-    			try {
-    				conn.close();
-    			} catch (SQLException e1) {
-    				e1.printStackTrace();
-    			}
     		}
 		}
 		supply.setModel(refresh_supply());
@@ -443,7 +414,6 @@ public class salesppl {
 		String query = "select name, job_title, id, rest_id, salary, avg_rating from employees where id = " + ck_id;
 		Statement stmt;
 		try {
-			conn = DriverManager.getConnection(url, user, password);
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()) {

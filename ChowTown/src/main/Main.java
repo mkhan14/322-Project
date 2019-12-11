@@ -23,6 +23,7 @@ public class Main {
 	private static Login login;
 	private static CustomerAccount myAccount;
 	private static User user;
+	private static Delivery delivery;
 
 	public static void main(String[] args) {
 		try {
@@ -96,10 +97,19 @@ public class Main {
 		}
 	}
 	
+	public static void goToDeliveryPage() {
+		if(user.getTitle() == User.DELIVERY) {
+			delivery = new Delivery();
+			delivery.setVisible(true);
+		}
+	}
+	
 	public static Connection getConnection() {
 		return conn;
 	}
-	
+	public static JFrame getFrame() {
+		return frame;
+	}
 	public static User getUser() {
 		return user;
 	}

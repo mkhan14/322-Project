@@ -222,9 +222,6 @@ public class Menu {
 	private void showRecommendation(int restID) {
 		String recommend = "";
 		String query = "SELECT item, avg_rating FROM menu WHERE rest_id = " + restID + " ORDER BY avg_rating DESC LIMIT 3;";
-		String query1 = "SELECT COUNT(*) FROM orders WHERE cust_id = " + Main.getUser().getId() + ";";
-		String query2 = "SELECT item, rate FROM orders JOIN orderhistory WHERE orders.order_id = orderhistory.order_id AND "
-				+ "rest_id = " + restID + " AND cust_id = " + Main.getUser().getId() + " ORDER BY rate DESC LIMIT 3;";
 		if(Main.getUser() == null) {
 			try {
 				Statement stmt = conn.createStatement();
@@ -237,6 +234,9 @@ public class Menu {
 			}
 			JOptionPane.showMessageDialog(null, recommend);
 		}else if(Main.getUser().getTitle() == User.CUSTOMER) {
+			String query1 = "SELECT COUNT(*) FROM orders WHERE cust_id = " + Main.getUser().getId() + ";";
+			String query2 = "SELECT item, rate FROM orders JOIN orderhistory WHERE orders.order_id = orderhistory.order_id AND "
+					+ "rest_id = " + restID + " AND cust_id = " + Main.getUser().getId() + " ORDER BY rate DESC LIMIT 3;";
 			int count = 0;
 			try {
 				Statement stmt = conn.createStatement();

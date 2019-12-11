@@ -187,7 +187,8 @@ public class CustomerAccount extends JFrame{
 				history.add(approval, c);
 				
 				JButton cancel = new JButton("Cancel");
-				cancel.setFont(new Font("monospaced", Font.PLAIN, 15));
+				cancel.setFont(new Font("monospaced", Font.PLAIN, 20));
+				cancel.setPreferredSize(new Dimension(100, 40));
 				cancel.addActionListener(new ActionListener() {
 
 					@Override
@@ -206,7 +207,8 @@ public class CustomerAccount extends JFrame{
 				history.add(cancel, c);
 				
 				JButton rate = new JButton("Rate");
-				rate.setFont(new Font("monospaced", Font.PLAIN, 15));
+				rate.setFont(new Font("monospaced", Font.PLAIN, 20));
+				rate.setPreferredSize(new Dimension(100, 40));
 				rate.addActionListener(new ActionListener() {
 
 					@Override
@@ -289,7 +291,8 @@ public class CustomerAccount extends JFrame{
 		}
 		
 		JButton confirmRate = new JButton("Rate");
-		confirmRate.setFont(new Font("monospaced", Font.PLAIN, 15));
+		confirmRate.setFont(new Font("monospaced", Font.PLAIN, 20));
+		confirmRate.setPreferredSize(new Dimension(150, 40));
 		confirmRate.addActionListener(new ActionListener() {
 
 			@Override

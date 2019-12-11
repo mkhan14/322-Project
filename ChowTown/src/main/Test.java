@@ -14,7 +14,7 @@ public class Test {
 		int c;
 		
 		int graph[][] = new int[][] {
-			{0,a,b,c},
+			{0,1,2,3},
 			{1,0,4,1},
 			{2,4,0,3},
 			{3,1,3,0}

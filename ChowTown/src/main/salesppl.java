@@ -164,6 +164,7 @@ public class salesppl {
 					.addContainerGap())
 		);
 		
+		
 		supply = new JTable() {
 			@Override
 			public boolean isCellEditable(int row, int col) {

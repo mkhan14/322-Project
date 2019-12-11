@@ -53,6 +53,7 @@ public class Info {
 	private ArrayList<Double> lThree;
 	private ArrayList<Integer> empl_ids;
 	private ArrayList<Integer> num_warnings;
+	private ArrayList<Integer> emplnumRateds;
 	
 	private static Manager manager;
 	
@@ -76,9 +77,10 @@ public class Info {
 		lThree = new ArrayList<Double>();
 		empl_ids = new ArrayList<Integer>();
 		num_warnings = new ArrayList<Integer>();
+		emplnumRateds = new ArrayList<Integer>();
 		
 		String query = "SELECT name,address,avg_rating,status,id,num_rated FROM customers JOIN customerratings WHERE rest_id = " + restID + " AND cust_id = id";
-		String query2 = "SELECT name,job_title,salary,avg_rating,last_three,id,warning FROM employees WHERE rest_id = " + restID;
+		String query2 = "SELECT name,job_title,salary,avg_rating,last_three,id,warning,num_rated FROM employees WHERE rest_id = " + restID;
 		
 		try {
 			Statement stmt = conn.createStatement();
@@ -101,6 +103,7 @@ public class Info {
 				lThree.add(rs2.getDouble("last_three"));
 				empl_ids.add(rs2.getInt("id"));
 				num_warnings.add(rs2.getInt("warning"));
+				emplnumRateds.add(rs2.getInt("num_rated"));
 			}
 			
 		} catch (SQLException e) {
@@ -240,7 +243,7 @@ public class Info {
 		}
 		
 		if(infoID == EI) {
-			panel.setLayout(new GridLayout(11,1));
+			panel.setLayout(new GridLayout(12,1));
 			
 			if(Main.getManager().getId() == 0)
 				panel.setBackground(new Color(255, 255, 200));
@@ -268,19 +271,26 @@ public class Info {
 			JLabel warnLabel = new JLabel("");
 			panel.add(warnLabel);
 			
+			JLabel emplnumratedLabel = new JLabel("");
+			panel.add(emplnumratedLabel);
+			
 			JButton warnBtn = new JButton("Warn Employee");
 			panel.add(warnBtn);
 			warnBtn.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-						String warnEmpl = "UPDATE employees SET warning = " + (num_warnings.get(emplList.getSelectedIndex()) + 1) + " WHERE rest_id = " + restID + " AND id = " + empl_ids.get(emplList.getSelectedIndex());
-						try {
-							Statement stmt = conn.createStatement();
-							stmt.executeUpdate(warnEmpl);
-							Main.goToInfo(Info.EI);
-						} catch (SQLException e1) {
-							e1.printStackTrace();
+						//String warnEmpl = "UPDATE employees SET warning = " + (num_warnings.get(emplList.getSelectedIndex()) + 1) + " WHERE rest_id = " + restID + " AND id = " + empl_ids.get(emplList.getSelectedIndex());
+						if(emplnumRateds.get(emplList.getSelectedIndex()) > 3 && empl_avg_ratings.get(emplList.getSelectedIndex()) < 2) {
+							String warnEmpl = "UPDATE employees SET warning = " + (num_warnings.get(emplList.getSelectedIndex()) + 1) + " WHERE rest_id = " + restID + " AND id = " + empl_ids.get(emplList.getSelectedIndex());
+							try {
+								Statement stmt = conn.createStatement();
+								stmt.executeUpdate(warnEmpl);
+								Main.goToInfo(Info.EI);
+							} catch (SQLException e1) {
+								e1.printStackTrace();
+							}
 						}
+						
 				
 			}
 			});
@@ -392,6 +402,9 @@ public class Info {
 					
 					warnLabel.setFont(new Font("monospaced", Font.PLAIN, 20));
 					warnLabel.setText("Warnings: "+ num_warnings.get(emplList.getSelectedIndex()).toString());
+					
+					emplnumratedLabel.setFont(new Font("monospaced", Font.PLAIN, 20));
+					emplnumratedLabel.setText("Number of times rated: "+ emplnumRateds.get(emplList.getSelectedIndex()).toString());
 				
 				}
 			});

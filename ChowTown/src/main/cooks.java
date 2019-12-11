@@ -307,7 +307,7 @@ public class cooks {
 		
 		acceptBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {				
-				System.out.println(order.getValueAt(selectedRow, 2));
+//				System.out.println(order.getValueAt(selectedRow, 2));
 				String query = "update orders set cook_id = "+ck_id+" where order_id = "+order.getValueAt(selectedRow, 0);
 	    		Statement stmt;
 	    		try {
@@ -316,6 +316,7 @@ public class cooks {
 	    		} catch(SQLException f) {
 	    			f.printStackTrace();
 	    		}
+				order.setModel(refresh_order());
 			}
 		});
 		GroupLayout gl_orders = new GroupLayout(orders);
@@ -680,7 +681,7 @@ public class cooks {
 	}
 	public DefaultTableModel refresh_order() {
 		DefaultTableModel order_model = new DefaultTableModel(new Object[] {"Order ID", "Items", "Cook's ID"},0);
-		String query = "select h.order_id,item,cook_id from chowtown.orders o,chowtown.orderhistory h order by order_id;";
+		String query = "select o.order_id,  h.item, o.cook_id from orders o inner join orderhistory h on o.order_id = h.order_id order by o.order_id";
 		Statement stmt;
 		try {
 			stmt = conn.createStatement();

@@ -3,36 +3,8 @@ package main;
 import java.util.Random; 
 
 public class FindRoute {
-//	public static void main(String args[]) {
-//		
-//		//generate random "traffic":
-//		Random rand = new Random();
-//		int A = rand.nextInt(10); 
-//		int B = rand.nextInt(10); 
-//		int C = rand.nextInt(10);
-//		int D = rand.nextInt(10);
-//		int E = rand.nextInt(10);
-//		int F = rand.nextInt(10);
-//		int G = rand.nextInt(10);
-//		int H = rand.nextInt(10);
-//		int I = rand.nextInt(10);
-//		int J = rand.nextInt(10);
-//		int K = rand.nextInt(10);
-//		int L = rand.nextInt(10);
-//		
-//		//traffic from the corresponding node (0) to other nodes 
-//		int graph[][] = new int[][] {
-//			{0,A,B,C},				//traffic from ChowTown to :   Chowtown = 0; A = a; B = b; C = c
-//			{D,0,E,F},				//traffic from A to:           Chowtown = d; A = 0; B = e; C = f
-//			{G,H,0,I},				//traffic from B to:		   Chowtown = g; A = h; B = 0; C = i
-//			{J,K,L,0}				//traffic from C to:		   Chowtown = j; A = k; B = l; C = 0
-//		};
-//		
-//		dijkstra(graph, 0);
-//	}
 	
 	public static int[] dijkstra(int src) {
-		
 		//generate random "traffic":
 		Random rand = new Random();
 		int A = rand.nextInt(10); 
@@ -55,7 +27,6 @@ public class FindRoute {
 			{G,H,0,I},				//traffic from B to:		   Chowtown = g; A = h; B = 0; C = i
 			{J,K,L,0}				//traffic from C to:		   Chowtown = j; A = k; B = l; C = 0
 		};
-		
 		
 		int traffic[] = new int[4]; //traffic from chowtown to other areas
 		boolean visited[] = new boolean [4];

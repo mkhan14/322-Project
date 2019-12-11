@@ -1,4 +1,4 @@
-package main;
+/*package main;
 
 public class Manager {
 	private int rest_id;
@@ -22,5 +22,5 @@ public class Manager {
 	public boolean isLoggedIn() {
 		return loggedIn;
 	}
-}
+}*/
 

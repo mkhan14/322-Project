@@ -55,7 +55,7 @@ public class Info {
 	private ArrayList<Integer> num_warnings;
 	private ArrayList<Integer> emplnumRateds;
 	
-	private static Manager manager;
+	//private static Manager manager;
 	
 
 	/**
@@ -123,11 +123,11 @@ public class Info {
 		if(infoID == CI) {
 			panel.setLayout(new GridLayout(8,1));
 			
-			if(Main.getManager().getId() == 0)
+			if(Main.getUser().getId() == 0)
 				panel.setBackground(new Color(255, 255, 200));
-			if(Main.getManager().getId() == 1)
+			if(Main.getUser().getId() == 1)
 				panel.setBackground(new Color(255, 230, 245));
-			if(Main.getManager().getId() == 2)
+			if(Main.getUser().getId() == 2)
 				panel.setBackground(new Color(240, 255, 220));
 			
 			JComboBox custList = new JComboBox(customers.toArray());
@@ -245,11 +245,11 @@ public class Info {
 		if(infoID == EI) {
 			panel.setLayout(new GridLayout(12,1));
 			
-			if(Main.getManager().getId() == 0)
+			if(Main.getUser().getId() == 0)
 				panel.setBackground(new Color(255, 255, 200));
-			if(Main.getManager().getId() == 1)
+			if(Main.getUser().getId() == 1)
 				panel.setBackground(new Color(255, 230, 245));
-			if(Main.getManager().getId() == 2)
+			if(Main.getUser().getId() == 2)
 				panel.setBackground(new Color(240, 255, 220));
 			
 			JComboBox emplList = new JComboBox(employees.toArray());

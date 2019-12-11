@@ -109,13 +109,17 @@ public class Login extends JFrame{
 		}
 		int count = 0;
 		int id = -1;
+		int rest_id = -1;
 		String name = "";
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()) {
 				count = rs.getInt("COUNT(*)");
-				id = rs.getInt("id");
+				if(title == User.MANAGER)
+					rest_id = rs.getInt("rest_id");
+				else
+					id = rs.getInt("id");
 				name = rs.getString("name");
 				
 			}
@@ -131,8 +135,10 @@ public class Login extends JFrame{
 				Main.setUser(new User(User.DELIVERY, id, name, true));
 			if(title == User.SALES)
 				Main.setUser(new User(User.SALES, id, name, true));
-			if(title == User.MANAGER)
-				Main.setUser(new User(User.MANAGER, id, name, true));
+			if(title == User.MANAGER) {
+				Main.setUser(new User(User.MANAGER, rest_id, name, true));
+				Main.initManager();
+			}
 			dispose();
 		}else {
 			message.setText("Account does not exist.");

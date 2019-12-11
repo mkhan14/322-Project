@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 public class Main {
 	private static final String url = "jdbc:mysql://localhost:3306/chowtown";
 	private static final String root = "root";
-	private static final String password = "risa";
+	private static final String password = "mahin";
 	private static Connection conn = null;
 	
 	private static JFrame frame;
@@ -23,6 +23,11 @@ public class Main {
 	private static Login login;
 	private static CustomerAccount myAccount;
 	private static User user;
+	
+	private static ManagerPage manager_page;
+	private static JPanel managerPage;
+	private static Info info;
+	//private static Manager manager;
 
 	public static void main(String[] args) {
 		try {
@@ -49,6 +54,18 @@ public class Main {
     	frame.setSize(600, 850);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+public static void initManager() {
+		
+		frame = new JFrame();
+		manager_page = new ManagerPage();
+		info = new Info();
+		managerPage = manager_page.createPage();
+		frame.add(managerPage);
+		frame.setSize(600,850);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	public static void goToRestaurantPage() {
@@ -106,5 +123,31 @@ public class Main {
 	public static void setUser(User c) {
 		user = c;
 	}
+	
+	public static void goToManagerPage() {
+		frame.getContentPane().removeAll();
+		frame.repaint();
+		frame.revalidate();
+		frame.add(managerPage);
+		frame.setVisible(true);
+		frame.setSize(600, 850);
+	}
+	
+	public static void goToInfo(int infoID) {
+		frame.getContentPane().removeAll();
+		frame.repaint();
+		frame.revalidate();
+		frame.add(info.generateInfo(infoID, user.getId()));
+		//frame.add(info.generateInfo(infoID, restID));
+		frame.setVisible(true);
+		frame.setSize(1000, 850);
+	}
+	
+	/*public static Manager getManager() {
+		return manager;
+	}
+	public static void setManager(Manager m) {
+		manager = m;
+	}*/
 	
 }

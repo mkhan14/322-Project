@@ -46,7 +46,7 @@ public class FindRoute {
 		}
 		traffic[src] = 0; //traffic from source to ChowTown is 0;
 		for(int count = 0; count < 4; count++) {
-			int d = minDistance(traffic, visited);
+			int d = minTraffic(traffic, visited);
 			System.out.println(areas[d]);
 			visited[d] = true;
 			for(int i = 0; i < 4; i++) {
@@ -60,7 +60,7 @@ public class FindRoute {
 		return traffic;
 	}
 	
-	public static int minDistance(int traffic[], boolean visited[]) { //cutting off Idaho
+	public static int minTraffic(int traffic[], boolean visited[]) {
 		int min = Integer.MAX_VALUE;
 		int index = -1;
 		for(int i = 0; i < 4; i++) {

@@ -77,15 +77,15 @@ public class Delivery extends JFrame{
 		traffic.setFont(new Font("monospaced", Font.BOLD, 30));
 		traffic.setBorder(border);
 		footers.add(traffic);
-		JLabel toArea0 = new JLabel("To AREA0 takes: ");
+		JLabel toArea0 = new JLabel("The Traffic to A: " + FindRoute.dijkstra(0)[1]);
 		toArea0.setFont(new Font("monospaced", Font.PLAIN, 20));
 		toArea0.setBorder(border);
 		footers.add(toArea0);
-		JLabel toArea1 = new JLabel("To AREA1 takes: ");
+		JLabel toArea1 = new JLabel("The Traffic to B: "+ FindRoute.dijkstra(0)[2]);
 		toArea1.setFont(new Font("monospaced", Font.PLAIN, 20));
 		toArea1.setBorder(border);
 		footers.add(toArea1);
-		JLabel toArea2 = new JLabel("To AREA2 takes: ");
+		JLabel toArea2 = new JLabel("The Traffic to C: "+ FindRoute.dijkstra(0)[3]);
 		toArea2.setFont(new Font("monospaced", Font.PLAIN, 20));
 		toArea2.setBorder(border);
 		footers.add(toArea2);

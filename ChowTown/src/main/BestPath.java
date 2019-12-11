@@ -4,12 +4,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Iterator;
 
 public class BestPath {
 	
-	private static Node getLowestDistanceNode(Set < Node > unsettledNodes) { //min priority queue's function
-	    Node lowestDistanceNode = null;										//initialize
-	    int lowestDistance = Integer.MAX_VALUE;								//set 
+	private static Node getLowestDistanceNode(Set < Node > unsettledNodes) { //
+	    Node lowestDistanceNode = null;										
+	    int lowestDistance = Integer.MAX_VALUE; 
 	    for (Node node: unsettledNodes) {
 	        int nodeDistance = node.getDistance();
 	        if (nodeDistance < lowestDistance) {
@@ -31,7 +32,7 @@ public class BestPath {
 	    }
 	}
 	
-	public static CityMap calculateShortestPathFromSource(CityMap graph, Node source) { //this is the queue
+	public static void calculateShortestPathFromSource(CityMap graph, Node source) { //this is the queue
 	    source.setDistance(0);
 	 
 	    Set<Node> settledNodes = new HashSet<>();
@@ -53,8 +54,22 @@ public class BestPath {
 	        }
 	        settledNodes.add(currentNode);
 	    }
-	    return graph;
+	    
+	    for (Node temp : settledNodes) {
+	    	System.out.print(temp.getName() + " -> ");
+	    }
+	    
+	    
+//	    while(settledNodes.hasNext()){
+//	        System.out.println(settledNodes.next()+" -> ");
+//	     }
+	    
+//	    while(!settledNodes.last) {
+//	    	forEach settledNodes
+//	    		System.out.println(settledNodes(i)+" -> ");
+//	    }
 	}
+	
 	
 //-------------------------------------------------------------------
 	public static void main(String[] args) {
@@ -78,9 +93,7 @@ public class BestPath {
 		citymap.addNode(b);
 		citymap.addNode(c);
 		 
-		citymap = BestPath.calculateShortestPathFromSource(citymap, chowtown);
-
-		System.out.println("The shortest paths from chowtown to the delivery destinations are: ChowTown->"+ citymap);
+		calculateShortestPathFromSource(citymap, chowtown);
 	}
 
 }

@@ -148,6 +148,7 @@ public class CustomerAccount extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Main.goToMyAccount();
+				dispose();
 			}
 			
 		});
@@ -193,7 +194,7 @@ public class CustomerAccount extends JFrame{
 					public void actionPerformed(ActionEvent e) {
 						if(cookID == null || deliID == null) {
 							deleteOrder(id);
-							repaint();
+							showOrderHistory();
 						}else {
 							JOptionPane.showMessageDialog(null, "Your order has been made already and cannot be canceled.");
 						}
@@ -313,7 +314,11 @@ public class CustomerAccount extends JFrame{
 							e1.printStackTrace();
 						}
 					}
-	
+					updateDeliRatings(deliID, Double.parseDouble(deliRate.getText()));
+					updateCookRatings(orderID, cookID);
+					updateMenuRatings(orderID);
+					dispose();
+					confirmRate.setEnabled(false);
 				}
 				
 			}
@@ -339,7 +344,6 @@ public class CustomerAccount extends JFrame{
 					checkInputs = false;
 					break;
 				}
-				System.out.println("!");
 			}catch(Exception e){
 				if(checkInputs)
 					JOptionPane.showMessageDialog(null, "Please enter integer or decimal values.");
@@ -358,11 +362,84 @@ public class CustomerAccount extends JFrame{
 				checkInputs = false;
 			}
 		}
-		
 		return checkInputs;
 	}
 	
-	//update rate menu items and the cook and delivery guy
+	private void updateDeliRatings(int deliID, double deliRate) {
+		double avg = 0;
+		String query = "SELECT avg_rating, num_rated FROM employees WHERE id = " + deliID + ";";
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				avg = ((rs.getDouble("avg_rating") * rs.getInt("num_rated")) + deliRate) / (rs.getInt("num_rated") + 1);
+			}
+			String query1 = "UPDATE employees SET avg_rating = " + avg + " WHERE id = " + deliID + ";";
+			String query2 = "UPDATE employees SET num_rated = num_rated + 1 WHERE id = " + deliID + ";";
+			stmt.executeUpdate(query1);
+			stmt.executeUpdate(query2);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		
+		}	
+	}
+	
+	private void updateCookRatings(int orderID, int cookID) {
+		String query = "SELECT SUM(rate), COUNT(rate) FROM orderhistory WHERE order_id = " + orderID + ";";
+		double avg = 0;
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				avg = Math.ceil(rs.getDouble("SUM(rate)") / rs.getDouble("COUNT(rate)"));
+			}
+			query = "SELECT avg_rating, num_rated FROM employees WHERE id = " + cookID + ";";
+			rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				avg = ((rs.getDouble("avg_rating") * rs.getInt("num_rated")) + avg) / (rs.getInt("num_rated") + 1);
+			}
+			
+			String query1 = "UPDATE employees SET avg_rating = " + avg + " WHERE id = " + cookID + ";";
+			String query2 = "UPDATE employees SET num_rated = num_rated + 1 WHERE id = " + cookID + ";";
+			stmt.executeUpdate(query1);
+			stmt.executeUpdate(query2);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void updateMenuRatings(int orderID) {
+		ArrayList<String> items = new ArrayList<String>();
+		ArrayList<Double> rates = new ArrayList<Double>();
+		ArrayList<Double> newAvg = new ArrayList<Double>();
+		String query = "SELECT item, rate FROM orderhistory WHERE order_id = " + orderID + ";";
+		try {
+			double avg = 0;
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				items.add(rs.getString("item"));
+				rates.add(rs.getDouble("rate"));
+			}
+			for(int i = 0; i < items.size(); i++) {
+				query = "SELECT avg_rating, num_ordered FROM menu WHERE item = '" + items.get(i) + "';";
+				rs = stmt.executeQuery(query);
+				while(rs.next()) {
+					avg = ((rs.getDouble("avg_rating") * rs.getInt("num_ordered")) + rates.get(i)) / (rs.getInt("num_ordered") + 1);
+					newAvg.add(avg);
+				}
+			}
+			for(int i = 0; i < items.size(); i++) {
+				query = "UPDATE menu SET avg_rating = " + newAvg.get(i) + "WHERE item = '" + items.get(i) + "';";
+				String query1 = "UPDATE menu SET num_ordered = num_ordered + 1 WHERE item = '" + items.get(i) + "';";
+				stmt.executeUpdate(query);
+				stmt.executeUpdate(query1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 	private void deleteOrder(int orderID) {
 		String query = "DELETE FROM orders WHERE order_id = " + orderID + ";";

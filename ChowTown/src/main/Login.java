@@ -219,7 +219,6 @@ public class Login extends JFrame{
 							Statement stmt = conn.createStatement();
 							ResultSet rs = stmt.executeQuery(query1);
 							while(rs.next()) {
-								System.out.println("!"+rs.getInt("MAX(id)"));
 								id = rs.getInt("MAX(id)") + 1;
 							}
 						} catch (SQLException e1) {

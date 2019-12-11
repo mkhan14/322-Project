@@ -26,9 +26,7 @@ public class Restaurant {
 	public JPanel createPage() {
 		JPanel panel = new JPanel(new BorderLayout());
 		
-		JPanel header = new JPanel();
-		header.add(headers());
-		panel.add(header, BorderLayout.NORTH);
+		panel.add(headers(), BorderLayout.NORTH);
 		
 		JPanel rest = new JPanel();
 		rest.setLayout(new GridLayout(3,1));

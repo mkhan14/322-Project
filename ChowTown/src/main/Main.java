@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 public class Main {
 	private static final String url = "jdbc:mysql://localhost:3306/chowtown";
 	private static final String root = "root";
-	private static final String password = "mahin";
+	private static final String password = "risa";
 	private static Connection conn = null;
 	
 	private static JFrame frame;
@@ -27,7 +27,8 @@ public class Main {
 	private static ManagerPage manager_page;
 	private static JPanel managerPage;
 	private static Info info;
-	//private static Manager manager;
+
+	private static Delivery delivery;
 
 	public static void main(String[] args) {
 		try {
@@ -116,7 +117,9 @@ public static void initManager() {
 	public static Connection getConnection() {
 		return conn;
 	}
-	
+	public static JFrame getFrame() {
+		return frame;
+	}
 	public static User getUser() {
 		return user;
 	}
@@ -143,11 +146,11 @@ public static void initManager() {
 		frame.setSize(1000, 850);
 	}
 	
-	/*public static Manager getManager() {
-		return manager;
+	public static void goToDeliveryPage() {
+		if(user.getTitle() == User.DELIVERY) {
+			delivery = new Delivery();
+			delivery.setVisible(true);
+		}
 	}
-	public static void setManager(Manager m) {
-		manager = m;
-	}*/
 	
 }

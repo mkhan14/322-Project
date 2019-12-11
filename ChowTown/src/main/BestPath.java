@@ -24,6 +24,7 @@ public class BestPath {
 	
 	private static void CalculateMinimumDistance(Node evaluationNode, Integer edgeWeigh, Node sourceNode) {
 	    Integer sourceDistance = sourceNode.getDistance();
+	    System.out.println(evaluationNode.getDistance() + "\n");
 	    if (sourceDistance + edgeWeigh < evaluationNode.getDistance()) {
 	        evaluationNode.setDistance(sourceDistance + edgeWeigh);
 	        LinkedList<Node> shortestPath = new LinkedList<>(sourceNode.getShortestPath());
@@ -32,7 +33,7 @@ public class BestPath {
 	    }
 	}
 	
-	public static void calculateShortestPathFromSource(CityMap graph, Node source) { //this is the queue
+	public static void calculateShortestPathFromSource(CityMap graph, Node source, Node destination) { //this is the queue
 	    source.setDistance(0);
 	 
 	    Set<Node> settledNodes = new HashSet<>();
@@ -42,22 +43,26 @@ public class BestPath {
 	 
 	    while (unsettledNodes.size() != 0) {
 	        Node currentNode = getLowestDistanceNode(unsettledNodes);
+	        if(currentNode == destination) {
+		        System.out.print(destination.getName()+" ");
+	        	break;
+	        }
 	        unsettledNodes.remove(currentNode);
-	        for (Entry < Node, Integer> adjacencyPair: 
-	          currentNode.getAdjacentNodes().entrySet()) {
+	        System.out.print(currentNode.getName()+" ");
+	        for (Entry < Node, Integer> adjacencyPair: currentNode.getAdjacentNodes().entrySet()) {
 	            Node adjacentNode = adjacencyPair.getKey();
 	            Integer edgeWeight = adjacencyPair.getValue();
 	            if (!settledNodes.contains(adjacentNode)) {
-	                CalculateMinimumDistance(adjacentNode, edgeWeight, currentNode);
+	                CalculateMinimumDistance(adjacentNode, edgeWeight, source);
 	                unsettledNodes.add(adjacentNode);
 	            }
 	        }
 	        settledNodes.add(currentNode);
 	    }
 	    
-	    for (Node temp : settledNodes) {
-	    	System.out.print(temp.getName() + " -> ");
-	    }
+//	    for (Node temp : settledNodes) {
+//	    	System.out.print(temp.getName() + " -> ");
+//	    }
 	    
 	    
 //	    while(settledNodes.hasNext()){
@@ -93,7 +98,7 @@ public class BestPath {
 		citymap.addNode(b);
 		citymap.addNode(c);
 		 
-		calculateShortestPathFromSource(citymap, chowtown);
+		calculateShortestPathFromSource(citymap, chowtown, c);
 	}
 
 }

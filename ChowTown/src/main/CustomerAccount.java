@@ -67,17 +67,17 @@ public class CustomerAccount extends JFrame{
 		name.setFont(new Font("monospaced", Font.PLAIN, 20));
 		JLabel address = new JLabel("Address: "+ User.AREAS[addrsID]);
 		address.setFont(new Font("monospaced", Font.PLAIN, 20));
-		JLabel statusPE = new JLabel("Status for Panda Express: "+statPE);
+		JLabel statusPE = new JLabel("Status for Panda Express: "+ statPE);
 		statusPE.setFont(new Font("monospaced", Font.PLAIN, 20));
-		JLabel avgRatingPE = new JLabel("Current Rating for Panda Express: "+ratingPE);
+		JLabel avgRatingPE = new JLabel("Current Rating for Panda Express: " + round(ratingPE));
 		avgRatingPE.setFont(new Font("monospaced", Font.PLAIN, 20));
 		JLabel statusS = new JLabel("Status for Sakura: "+statS);
 		statusS.setFont(new Font("monospaced", Font.PLAIN, 20));
-		JLabel avgRatingS = new JLabel("Current Rating for Sakura: "+ratingS);
+		JLabel avgRatingS = new JLabel("Current Rating for Sakura: " + round(ratingS));
 		avgRatingS.setFont(new Font("monospaced", Font.PLAIN, 20));
 		JLabel statusMC = new JLabel("Status for Masala Cafe: "+statMC);
 		statusMC.setFont(new Font("monospaced", Font.PLAIN, 20));
-		JLabel avgRatingMC = new JLabel("Current Rating for Masala Cafe: "+ratingMC);
+		JLabel avgRatingMC = new JLabel("Current Rating for Masala Cafe: " + round(ratingMC));
 		avgRatingMC.setFont(new Font("monospaced", Font.PLAIN, 20));
 		
 		JButton orderHistory = new JButton("Order History");
@@ -452,6 +452,10 @@ public class CustomerAccount extends JFrame{
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
+	}
+	
+	private double round(double value) {
+		return  Math.floor(value * 100) / 100;
 	}
 
 }

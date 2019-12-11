@@ -135,7 +135,7 @@ public class Menu {
 			price.setFont(new Font("monospaced", Font.PLAIN, 20));
 			c.gridx = 1;
 			panel.add(price, c);
-			JLabel rate = new JLabel("Rate:" + Double.toString(ratings.get(i)));
+			JLabel rate = new JLabel("Rate:" + Double.toString(round(ratings.get(i))));
 			rate.setBorder(border);
 			rate.setFont(new Font("monospaced", Font.PLAIN, 20));
 			c.gridx = 2;
@@ -208,6 +208,7 @@ public class Menu {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				Main.goToRestaurantPage();
 				Main.goToOrderConfirmation(cart, restID);
 			}
 			
@@ -227,7 +228,7 @@ public class Menu {
 				Statement stmt = conn.createStatement();
 				ResultSet rs = stmt.executeQuery(query);
 				while(rs.next()) {
-					recommend += rs.getString("item") + "        Rate: " + rs.getDouble("avg_rating") + "\n";
+					recommend += rs.getString("item") + "        Rate: " + round(rs.getDouble("avg_rating")) + "\n";
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -253,7 +254,7 @@ public class Menu {
 					Statement stmt = conn.createStatement();
 					ResultSet rs = stmt.executeQuery(query2);
 					while(rs.next()) {
-						recommend += rs.getString("item") + "        Rate: " + rs.getDouble("rate") + "\n";
+						recommend += rs.getString("item") + "        Rate: " + round(rs.getDouble("rate")) + "\n";
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -275,8 +276,8 @@ public class Menu {
 		}
 	}
 	
-	public static ArrayList<Item> getCart(){
-		return cart;
+	private double round(double value) {
+		return  Math.floor(value * 100) / 100;
 	}
 	
 	public class Item {

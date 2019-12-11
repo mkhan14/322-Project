@@ -337,7 +337,7 @@ public class Delivery extends JFrame{
 		job.setFont(new Font("monospaced", Font.PLAIN, 20));
 		JLabel salary = new JLabel("Salary: $" +  sal);
 		salary.setFont(new Font("monospaced", Font.PLAIN, 20));
-		JLabel rating = new JLabel("Rate: " + rate);
+		JLabel rating = new JLabel("Rate: " + round(rate));
 		rating.setFont(new Font("monospaced", Font.PLAIN, 20));
 		JLabel warning = new JLabel("Warning: " + warn);
 		warning.setFont(new Font("monospaced", Font.PLAIN, 20));
@@ -390,6 +390,10 @@ public class Delivery extends JFrame{
 			checkInputs = false;
 		}
 		return checkInputs;
+	}
+	
+	private double round(double value) {
+		return  Math.floor(value * 100) / 100;
 	}
 
 }

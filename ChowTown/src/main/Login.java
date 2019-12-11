@@ -139,8 +139,11 @@ public class Login extends JFrame{
 				Main.goToDeliveryPage();
 				Main.getFrame().dispose();
 			}
-			if(title == User.SALES)
+			if(title == User.SALES) {
 				Main.setUser(new User(User.SALES, id, name, true));
+				Main.goToSalesPage();
+				Main.getFrame().dispose();
+			}
 			if(title == User.MANAGER) {
 				Main.setUser(new User(User.MANAGER, rest_id, name, true));
 				Main.initManager();

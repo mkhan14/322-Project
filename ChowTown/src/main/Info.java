@@ -50,7 +50,7 @@ public class Info {
 	private ArrayList<Integer> jobTitles;
 	private ArrayList<Double> salaries;
 	private ArrayList<Double> empl_avg_ratings;
-	private ArrayList<Double> lThree;
+	//private ArrayList<Double> lThree;
 	private ArrayList<Integer> empl_ids;
 	private ArrayList<Integer> num_warnings;
 	private ArrayList<Integer> emplnumRateds;
@@ -74,13 +74,13 @@ public class Info {
 		jobTitles = new ArrayList<Integer>();
 		salaries = new ArrayList<Double>();
 		empl_avg_ratings = new ArrayList<Double>();
-		lThree = new ArrayList<Double>();
+		//lThree = new ArrayList<Double>();
 		empl_ids = new ArrayList<Integer>();
 		num_warnings = new ArrayList<Integer>();
 		emplnumRateds = new ArrayList<Integer>();
 		
 		String query = "SELECT name,address,avg_rating,status,id,num_rated FROM customers JOIN customerratings WHERE rest_id = " + restID + " AND cust_id = id";
-		String query2 = "SELECT name,job_title,salary,avg_rating,last_three,id,warning,num_rated FROM employees WHERE rest_id = " + restID;
+		String query2 = "SELECT name,job_title,salary,avg_rating,id,warning,num_rated FROM employees WHERE rest_id = " + restID;
 		
 		try {
 			Statement stmt = conn.createStatement();
@@ -100,7 +100,7 @@ public class Info {
 				jobTitles.add(rs2.getInt("job_title"));
 				salaries.add(rs2.getDouble("salary"));
 				empl_avg_ratings.add(rs2.getDouble("avg_rating"));
-				lThree.add(rs2.getDouble("last_three"));
+				//lThree.add(rs2.getDouble("last_three"));
 				empl_ids.add(rs2.getInt("id"));
 				num_warnings.add(rs2.getInt("warning"));
 				emplnumRateds.add(rs2.getInt("num_rated"));
@@ -183,7 +183,7 @@ public class Info {
 						} catch (SQLException e1) {
 							e1.printStackTrace();
 						}
-					}else if(cust_avg_ratings.get(custList.getSelectedIndex()) < 2 && (custList.getSelectedIndex()) > 1 && cust_status.get(custList.getSelectedIndex()) == 1 && numRateds.get(custList.getSelectedIndex()) > 3){
+					}else if(cust_avg_ratings.get(custList.getSelectedIndex()) < 2 && cust_avg_ratings.get(custList.getSelectedIndex()) > 1 && cust_status.get(custList.getSelectedIndex()) == 1 && numRateds.get(custList.getSelectedIndex()) > 3){
 						String updateStat = "UPDATE customerratings SET status = '-1' WHERE avg_rating < 2 AND avg_rating > 1 AND num_rated > 3 AND status = 1 AND rest_id = " + restID + " AND cust_id = " + cust_ids.get(custList.getSelectedIndex());
 						try {
 							Statement stmt = conn.createStatement();

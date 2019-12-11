@@ -30,6 +30,8 @@ public class Main {
 	private static Info info;
 
 	private static Delivery delivery;
+	private static cooks cook;
+	private static salesppl sales;
 
 	public static void main(String[] args) {
 		try {
@@ -58,7 +60,7 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-public static void initManager() {
+	public static void initManager() {
 		managerFrame = new JFrame();
 		manager_page = new ManagerPage();
 		info = new Info();
@@ -67,6 +69,10 @@ public static void initManager() {
 		managerFrame.setSize(600,850);
 		managerFrame.setVisible(true);
 		managerFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	public static void initCook() {
+		cook = new cooks();
 	}
 	
 	public static void goToRestaurantPage() {
@@ -144,7 +150,6 @@ public static void initManager() {
 		frame.repaint();
 		frame.revalidate();
 		frame.add(info.generateInfo(infoID, user.getId()));
-		//frame.add(info.generateInfo(infoID, restID));
 		frame.setVisible(true);
 		frame.setSize(1000, 850);
 	}
@@ -154,6 +159,11 @@ public static void initManager() {
 			delivery = new Delivery();
 			delivery.setVisible(true);
 		}
+	}
+	
+	public static void goToSalesPage() {
+		if(user.getTitle() == User.SALES) 
+			sales = new salesppl();
 	}
 	
 }

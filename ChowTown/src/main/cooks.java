@@ -53,31 +53,14 @@ import java.awt.event.FocusEvent;
 import java.awt.Font;
 
 public class cooks {
-
+	private Connection conn = Main.getConnection();
 	private JFrame frmCooks;
 	private static final String url = "jdbc:mysql://localhost:3306/chowtown";
 	private static final String user = "root";
-	private static final String password = "Love9420516@";
-	private static Connection conn = null;
 	private String[][] menu_val;
 	private String del_itm = null;
-	private int index = 0, ck_id = 1;
+	private int index = 0, ck_id = Main.getUser().getId();
 	private int selectedRow;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					cooks window = new cooks();
-					window.frmCooks.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 		
 	private JTable products;
 	private JTable menu_items;
@@ -105,6 +88,7 @@ public class cooks {
 		frmCooks.setTitle("Cooks");
 		frmCooks.setBounds(100, 100, 780, 490);
 		frmCooks.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmCooks.setVisible(true);
 
 		JButton acceptBtn = new JButton("Accept");
 		acceptBtn.setEnabled(false);
@@ -231,17 +215,10 @@ public class cooks {
 						String query = "delete from menu where item = \"" + del_itm + "\"";
 			    		Statement stmt;
 			    		try {
-			    			conn = DriverManager.getConnection(url, user, password);
 			    			stmt = conn.createStatement();
 			    			stmt.executeUpdate(query);
 			    		} catch(SQLException f) {
 			    			f.printStackTrace();
-			    		}finally {
-			    			try {
-			    				conn.close();
-			    			} catch (SQLException e1) {
-			    				e1.printStackTrace();
-			    			}
 			    		}
 			    		menu_items.setModel(refresh_menu());
 			    		menu_items.getModel().addTableModelListener(
@@ -334,18 +311,10 @@ public class cooks {
 				String query = "update orders set cook_id = "+ck_id+" where order_id = "+order.getValueAt(selectedRow, 0);
 	    		Statement stmt;
 	    		try {
-	    			conn = DriverManager.getConnection(url, user, password);
 	    			stmt = conn.createStatement();
 	    			stmt.executeUpdate(query);    			
 	    		} catch(SQLException f) {
 	    			f.printStackTrace();
-	    		}finally {
-	    			try {
-	    				conn.close();
-	    			} catch (SQLException e1) {
-	    				e1.printStackTrace();
-	    			}
-	    			order.setModel(refresh_order());
 	    		}
 			}
 		});
@@ -431,17 +400,10 @@ public class cooks {
 					String query = "update employees set name = \""+txtName.getText()+"\" where id = " + txtID.getText();
 		    		Statement stmt;
 		    		try {
-		    			conn = DriverManager.getConnection(url, user, password);
 		    			stmt = conn.createStatement();
 		    			stmt.executeUpdate(query);
 		    		} catch(SQLException f) {
 		    			f.printStackTrace();
-		    		}finally {
-		    			try {
-		    				conn.close();
-		    			} catch (SQLException e1) {
-		    				e1.printStackTrace();
-		    			}
 		    		}
 		    		String[] update = myAccount();
 		    		txtName.setText(update[0]);
@@ -555,6 +517,13 @@ public class cooks {
 		});
 		
 		JButton btnLogOut = new JButton("Log out");
+		btnLogOut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Main.setUser(null);
+				Main.goToRestaurantPage();
+				frmCooks.dispose();
+			}
+		});
 		
 		JButton btnViewOrders = new JButton("View Orders");
 		btnViewOrders.addActionListener(new ActionListener() {
@@ -650,24 +619,15 @@ public class cooks {
         int result = JOptionPane.showConfirmDialog(null, panel, "Add Menu Item",
             JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
-    		String query = "insert into menu values(1, '"+field1.getText().toString()+"', "+Float.parseFloat(field2.getText().toString())+")";
+    		String query = "insert into menu values(1, '"+field1.getText().toString()+"', "+Float.parseFloat(field2.getText().toString())+", 5, 1)";
     		Statement stmt;
     		try {
-    			conn = DriverManager.getConnection(url, user, password);
     			stmt = conn.createStatement();
     			stmt.executeUpdate(query);    			
     		} catch(SQLException e) {
     			e.printStackTrace();
-    		}finally {
-    			try {
-    				conn.close();
-    			} catch (SQLException e1) {
-    				e1.printStackTrace();
-    			}
-    			menu_items.setModel(refresh_menu());
     		}
-        } else {
-            
+    		menu_items.setModel(refresh_menu());
         }
 	}
 	public String[] myAccount() {
@@ -675,7 +635,6 @@ public class cooks {
 		String query = "select name, job_title, id, rest_id, salary, avg_rating from employees where id = " + ck_id;
 		Statement stmt;
 		try {
-			conn = DriverManager.getConnection(url, user, password);
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()) {
@@ -684,12 +643,6 @@ public class cooks {
 			}			
 		} catch(SQLException e) {
 			e.printStackTrace();
-		}finally {
-			try {
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 		}
 		return result;
 	}
@@ -698,7 +651,6 @@ public class cooks {
 		String query2 = "Select distinct m.rest_id, item, price from menu m, employees e where m.rest_id = e.rest_id";
 		Statement stmt;
 		try {
-			conn = DriverManager.getConnection(url, user, password);
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query2);
 			while(rs.next()) {
@@ -707,12 +659,6 @@ public class cooks {
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
-		}finally {
-			try {
-				conn.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 		}
 		return menu_model;
 	}
@@ -721,7 +667,6 @@ public class cooks {
 		String query = "Select * from supplies";
 		Statement stmt;
 		try {
-			conn = DriverManager.getConnection(url, user, password);
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()) {
@@ -730,13 +675,6 @@ public class cooks {
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
-		}finally {
-			try {
-				conn.close();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 		}
 		return supply_model;
 	}
@@ -745,7 +683,6 @@ public class cooks {
 		String query = "select h.order_id,item,cook_id from chowtown.orders o,chowtown.orderhistory h order by order_id;";
 		Statement stmt;
 		try {
-			conn = DriverManager.getConnection(url, user, password);
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()) {
@@ -754,13 +691,6 @@ public class cooks {
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
-		}finally {
-			try {
-				conn.close();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 		}
 		return order_model;
 	}
@@ -769,17 +699,10 @@ public class cooks {
 			String query = "update menu set price = "+menu_val[i][1]+" where item = \"" +menu_val[i][0]+"\"";
     		Statement stmt;
     		try {
-    			conn = DriverManager.getConnection(url, user, password);
     			stmt = conn.createStatement();
     			stmt.executeUpdate(query);
     		} catch(SQLException e) {
     			e.printStackTrace();
-    		}finally {
-    			try {
-    				conn.close();
-    			} catch (SQLException e1) {
-    				e1.printStackTrace();
-    			}
     		}
 		}
 		menu_items.setModel(refresh_menu());

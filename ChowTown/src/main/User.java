@@ -19,7 +19,7 @@ public class User {
 	final static int AREA0 = 0;
 	final static int AREA1 = 1;
 	final static int AREA2 = 2;
-	final static String[] AREAS = {"AREA0", "AREA1", "AREA2"};
+	final static String[] AREAS = {"A", "B", "C"};
 
 	
 	private int title;

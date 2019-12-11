@@ -197,7 +197,7 @@ public class CustomerAccount extends JFrame{
 							deleteOrder(id);
 							showOrderHistory();
 						}else {
-							JOptionPane.showMessageDialog(null, "Your order has been made already and cannot be canceled.");
+							JOptionPane.showMessageDialog(null, "Your order has been made already and cannot be cancelled.");
 						}
 					}
 					
@@ -213,7 +213,9 @@ public class CustomerAccount extends JFrame{
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						if(cookID == null || deliID == null) {
+						if(alreadyRated(id)) {
+							JOptionPane.showMessageDialog(null, "You already rated this order.");
+						}else if(cookID == null || deliID == null) {
 							JOptionPane.showMessageDialog(null, "Your order has not been made yet.");
 						}else {
 							goToRateScreen(id, (Integer) cookID, (Integer)deliID);
@@ -321,7 +323,6 @@ public class CustomerAccount extends JFrame{
 					updateCookRatings(orderID, cookID);
 					updateMenuRatings(orderID);
 					dispose();
-					confirmRate.setEnabled(false);
 				}
 				
 			}
@@ -335,6 +336,21 @@ public class CustomerAccount extends JFrame{
 		setSize(600, 700);
 		setContentPane(panel);
 		setVisible(true);
+	}
+	
+	public boolean alreadyRated(int orderID) {
+		String query = "SELECT deli_rate FROM orders WHERE order_id = " + orderID + ";";
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				if(rs.getObject("deli_rate") != null)
+					return true;
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		return false;
 	}
 	
 	private boolean checkInputs(ArrayList<JTextField> inputs, JTextField deliRate) {

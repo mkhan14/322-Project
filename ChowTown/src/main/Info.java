@@ -243,7 +243,7 @@ public class Info {
 		}
 		
 		if(infoID == EI) {
-			panel.setLayout(new GridLayout(12,1));
+			panel.setLayout(new GridLayout(11,1));
 			
 			if(Main.getUser().getId() == 0)
 				panel.setBackground(new Color(255, 255, 200));
@@ -265,8 +265,8 @@ public class Info {
 			JLabel empl_av_rate = new JLabel("");
 			panel.add(empl_av_rate);
 			
-			JLabel lastThreeLabel = new JLabel("");
-			panel.add(lastThreeLabel);
+			//JLabel lastThreeLabel = new JLabel("");
+			//panel.add(lastThreeLabel);
 			
 			JLabel warnLabel = new JLabel("");
 			panel.add(warnLabel);
@@ -280,7 +280,7 @@ public class Info {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 						//String warnEmpl = "UPDATE employees SET warning = " + (num_warnings.get(emplList.getSelectedIndex()) + 1) + " WHERE rest_id = " + restID + " AND id = " + empl_ids.get(emplList.getSelectedIndex());
-						if(emplnumRateds.get(emplList.getSelectedIndex()) > 3 && empl_avg_ratings.get(emplList.getSelectedIndex()) < 2) {
+						if(emplnumRateds.get(emplList.getSelectedIndex()) >= 3 && empl_avg_ratings.get(emplList.getSelectedIndex()) < 2) {
 							String warnEmpl = "UPDATE employees SET warning = " + (num_warnings.get(emplList.getSelectedIndex()) + 1) + " WHERE rest_id = " + restID + " AND id = " + empl_ids.get(emplList.getSelectedIndex());
 							try {
 								Statement stmt = conn.createStatement();
@@ -310,7 +310,7 @@ public class Info {
 							e1.printStackTrace();
 						}
 					}else if(num_warnings.get(emplList.getSelectedIndex()) == 3 && jobTitles.get(emplList.getSelectedIndex()) == 2){
-						String fireEmpl = "DELETE FROM employees WHERE warning > 3 AND job_title = 2 AND rest_id = " + restID + " AND id = " + empl_ids.get(emplList.getSelectedIndex());
+						String fireEmpl = "DELETE FROM employees WHERE warning = 3 AND job_title = 2 AND rest_id = " + restID + " AND id = " + empl_ids.get(emplList.getSelectedIndex());
 						try {
 							Statement stmt = conn.createStatement();
 							stmt.executeUpdate(fireEmpl);
@@ -397,8 +397,8 @@ public class Info {
 					empl_av_rate.setFont(new Font("monospaced", Font.PLAIN, 20));
 					empl_av_rate.setText("Average Rating: "+ empl_avg_ratings.get(emplList.getSelectedIndex()).toString());
 					
-					lastThreeLabel.setFont(new Font("monospaced", Font.PLAIN, 20));
-					lastThreeLabel.setText("Last Three Ratings Average: "+ lThree.get(emplList.getSelectedIndex()).toString());
+					//lastThreeLabel.setFont(new Font("monospaced", Font.PLAIN, 20));
+					//lastThreeLabel.setText("Last Three Ratings Average: "+ lThree.get(emplList.getSelectedIndex()).toString());
 					
 					warnLabel.setFont(new Font("monospaced", Font.PLAIN, 20));
 					warnLabel.setText("Warnings: "+ num_warnings.get(emplList.getSelectedIndex()).toString());

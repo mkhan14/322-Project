@@ -12,8 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class ManagerPage {
-
-	//private static Manager manager;
 	
 	final static String[] rest = {"Panda Express", "Sakura", "Masala Cafe"};
 	
@@ -83,6 +81,7 @@ public class ManagerPage {
 			public void actionPerformed(ActionEvent e) {
 				Main.setUser(null);
 				Main.goToRestaurantPage();
+				Main.getManagerFrame().dispose();
 			}
 			
 		});

@@ -16,6 +16,7 @@ public class Main {
 	private static Connection conn = null;
 	
 	private static JFrame frame;
+	private static JFrame managerFrame;
 	private static Restaurant restaurant;
 	private static JPanel restaurantPage;
 	private static Menu menu;
@@ -58,15 +59,14 @@ public class Main {
 	}
 	
 public static void initManager() {
-		
-		frame = new JFrame();
+		managerFrame = new JFrame();
 		manager_page = new ManagerPage();
 		info = new Info();
 		managerPage = manager_page.createPage();
-		frame.add(managerPage);
-		frame.setSize(600,850);
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		managerFrame.add(managerPage);
+		managerFrame.setSize(600,850);
+		managerFrame.setVisible(true);
+		managerFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	public static void goToRestaurantPage() {
@@ -119,6 +119,9 @@ public static void initManager() {
 	}
 	public static JFrame getFrame() {
 		return frame;
+	}
+	public static JFrame getManagerFrame() {
+		return managerFrame;
 	}
 	public static User getUser() {
 		return user;

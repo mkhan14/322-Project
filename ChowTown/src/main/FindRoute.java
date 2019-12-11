@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 
 public class FindRoute {
 
+	public static JFrame routes;
 	private static String [] areas = {"CHOWTOWN", "A", "B", "C"};
 	
 	public static int[] dijkstra(int src) {
@@ -32,7 +33,7 @@ public class FindRoute {
 			{C,E,F,0}				//traffic from C to:		   Chowtown = j; A = k; B = l; C = 0
 		};
 
-		JFrame routes = new JFrame();
+		routes = new JFrame();
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(5,5,5,5);

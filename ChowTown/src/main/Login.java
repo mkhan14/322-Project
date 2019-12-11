@@ -257,12 +257,21 @@ public class Login extends JFrame{
 										"', '" + name + "', " + title + ", 15, 5, 1, 5);";
 								stmt.executeUpdate(query6);
 							}
-							if(title == User.COOK)
+							if(title == User.COOK) {
 								Main.setUser(new User(User.COOK, id, name, true));
-							if(title == User.DELIVERY)
+								Main.initCook();
+								Main.getFrame().dispose();
+							}
+							if(title == User.DELIVERY) {
 								Main.setUser(new User(User.DELIVERY, id, name, true));
-							if(title == User.SALES)
+								Main.goToDeliveryPage();
+								Main.getFrame().dispose();
+							}
+							if(title == User.SALES) {
 								Main.setUser(new User(User.SALES, id, name, true));
+								Main.goToSalesPage();
+								Main.getFrame().dispose();
+							}
 							dispose();
 						} catch (SQLException e1) {
 							e1.printStackTrace();

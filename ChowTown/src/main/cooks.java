@@ -41,10 +41,20 @@ import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.border.TitledBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.UIManager;
 import javax.swing.ListSelectionModel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.InputMethodListener;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class cooks {
 
@@ -53,9 +63,10 @@ public class cooks {
 	private static final String user = "root";
 	private static final String password = "Love9420516@";
 	private static Connection conn = null;
-	private int p_num, emp_id;
-	private float price;
-	private String p_name;
+	private String[][] menu_val;
+	private String del_itm = null;
+	private int index = 0;
+	private int selectedRow;
 	/**
 	 * Launch the application.
 	 */
@@ -64,51 +75,14 @@ public class cooks {
 			public void run() {
 				try {
 					cooks window = new cooks();
-//					window.jframe.setVisible(true);
 					window.frmCooks.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-//				try {
-//					conn = DriverManager.getConnection(url, user, password);
-//					someFunction();
-//					//cooks window = new cooks();					
-//					//window.frame.setVisible(true);
-//				} catch(SQLException e){
-//					e.printStackTrace();
-//				} finally {
-//					try {
-//						conn.close();
-//					} catch(SQLException e) {
-//						e.printStackTrace();
-//					}
-//				}
 			}
-//			
-//			public void someFunction() {
-//				String query = "Select * from customers";
-//				Statement stmt;
-//				try {
-//					stmt = conn.createStatement();
-//					ResultSet rs = stmt.executeQuery(query);
-//					while(rs.next()) {
-//						System.out.println(rs.getString("username"));
-//					}
-//				} catch(SQLException e) {
-//					e.printStackTrace();
-//				}
-//			}
 		});
 	}
-	
-	/**
-	 * For JTable use
-	 * @param p_num
-	 * @param emp_id
-	 * @param p_name
-	 * @param price
-	 */
-	
+		
 	ArrayList<prods> pros = new ArrayList<prods>();
 	private JTable products;
 	private JTable menu_items;
@@ -202,7 +176,20 @@ public class cooks {
 		
 		JScrollPane Menu_scrollPane = new JScrollPane();
 		
-		menu_items = new JTable();
+		menu_items = new JTable() {
+			@Override
+			public boolean isCellEditable(int row, int col) {
+				return col == 2 ? true:false;
+			}
+		};
+		menu_items.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				selectedRow = menu_items.getSelectedRow();
+				del_itm = (String) menu_items.getValueAt(selectedRow,1);
+			}
+		});
+		
 		menu_items.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
@@ -216,7 +203,6 @@ public class cooks {
 		menu_items.setFillsViewportHeight(true);
 		menu_items.getTableHeader().setReorderingAllowed(false);
 		
-//		Menu_scrollPane.setColumnHeaderView(menu_items);
 		Menu_scrollPane.setViewportView(menu_items);
 		
 		JButton additem = new JButton("Add New Item");
@@ -229,15 +215,48 @@ public class cooks {
 		JButton btnSave = new JButton("Save");
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				int[] selection = menu_items.getSelectedRows();
-//				for(int i = 0; i < selection.length; i++) {
-//					selection[i] = menu_items.convertRowIndexToModel(selection[i]);
-//				}
-				getValues();
+				updateValues();
 			}
 		});
 		
 		JButton btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (del_itm != null)
+					if(JOptionPane.showConfirmDialog(null, "Confirm delete item \""+del_itm+"\"?", "Delete Menu Item", JOptionPane.CANCEL_OPTION) == JOptionPane.YES_OPTION) {
+						String query = "delete from menu where item = \"" + del_itm + "\"";
+			    		Statement stmt;
+			    		try {
+			    			conn = DriverManager.getConnection(url, user, password);
+			    			stmt = conn.createStatement();
+			    			stmt.executeUpdate(query);
+			    		} catch(SQLException f) {
+			    			f.printStackTrace();
+			    		}finally {
+			    			try {
+			    				conn.close();
+			    			} catch (SQLException e1) {
+			    				e1.printStackTrace();
+			    			}
+			    		}
+			    		menu_items.setModel(refresh_menu());
+			    		menu_items.getModel().addTableModelListener(
+			    				new TableModelListener()
+			    				{
+			    					public void tableChanged(TableModelEvent e) {
+			    						int selectedRowIndex;
+			    						selectedRowIndex = menu_items.getSelectedRow();
+			    						menu_val[index][0] = menu_items.getValueAt(selectedRowIndex, 1).toString();
+			    						menu_val[index][1] = menu_items.getValueAt(selectedRowIndex, 2).toString();
+			    						index++;
+			    					}
+			    				});
+			    		del_itm = null;
+					}else;
+				else
+					JOptionPane.showMessageDialog(null, "Please select an item.", "Warning", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 		
 		GroupLayout gl_menu = new GroupLayout(menu);
 		gl_menu.setHorizontalGroup(
@@ -326,6 +345,19 @@ public class cooks {
 				parent.add(menu);
 				parent.repaint();
 				parent.revalidate();
+				menu_val = new String[menu_items.getRowCount()][2];
+				menu_items.getModel().addTableModelListener(
+				new TableModelListener()
+				{
+					public void tableChanged(TableModelEvent e) {
+						int selectedRowIndex;
+						selectedRowIndex = menu_items.getSelectedRow();
+						menu_val[index][0] = menu_items.getValueAt(selectedRowIndex, 1).toString();
+						menu_val[index][1] = menu_items.getValueAt(selectedRowIndex, 2).toString();
+//						System.out.println(menu_val[index][0]+" "+menu_val[index][1]);
+						index++;
+					}
+				});
 			}
 		});
 		
@@ -386,6 +418,12 @@ public class cooks {
 		panel.setLayout(gl_panel);
 		frmCooks.getContentPane().setLayout(groupLayout);
 	}
+//	public void tableChanged(TableModelEvent e) {
+//		int row = e.getFirstRow();
+//		int column = e.getColumn();
+//		Object data = menu_items.getValueAt(row, column);
+//		System.out.println(data);
+//	}
 	private void addmenuitem() { 
         JTextField field1 = new JTextField("");
         JTextField field2 = new JTextField("");
@@ -418,7 +456,7 @@ public class cooks {
         }
 	}
 	public DefaultTableModel refresh_menu() {
-		DefaultTableModel menu_model = new DefaultTableModel(new Object[] {"Restaurant ID", "Item", "Price", "Save", "Delete"},0);
+		DefaultTableModel menu_model = new DefaultTableModel(new Object[] {"Restaurant ID", "Item", "Price"},0);
 		String query2 = "Select distinct m.rest_id, item, price from menu m, employees e where m.rest_id = e.rest_id";
 		Statement stmt;
 		try {
@@ -426,7 +464,7 @@ public class cooks {
 			stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(query2);
 			while(rs.next()) {
-				Object row[] = {rs.getInt("rest_id"), rs.getString("item"), rs.getFloat("price"), new JButton(), new JButton()};
+				Object row[] = {rs.getInt("rest_id"), rs.getString("item"), rs.getFloat("price")};
 				menu_model.addRow(row);
 			}
 		} catch(SQLException e) {
@@ -489,26 +527,14 @@ public class cooks {
 		}
 		return order_model;
 	}
-	public void updateValues(DefaultTableModel menu) {
-		int row = menu_items.getRowCount();
-		int column = menu_items.getColumnCount();
-		String[][] result = new String[row][column];
-		for(int i = 0; i < row; i++) {
-			for(int j = 0; j < column; j++) {
-				result[i][j] = (String) menu_items.getModel().getValueAt(i,j);
-			}
-		}
-		Vector p_values; 
-		String[] values = new String[3];
-		for(int i = 0; i < row; i++) {
-			values = result[i];
-			p_values = menu.getDataVector();
-			String query = "update menu set item = \""+values[1]+"\", price = "+values[2]+" where item = \""++"\"";
+	public void updateValues() {		
+		for(int i = 0; i < index; i++) {
+			String query = "update menu set price = "+menu_val[i][1]+" where item = \"" +menu_val[i][0]+"\"";
     		Statement stmt;
     		try {
     			conn = DriverManager.getConnection(url, user, password);
     			stmt = conn.createStatement();
-    			stmt.executeUpdate(query);    			
+    			stmt.executeUpdate(query);
     		} catch(SQLException e) {
     			e.printStackTrace();
     		}finally {
@@ -517,8 +543,20 @@ public class cooks {
     			} catch (SQLException e1) {
     				e1.printStackTrace();
     			}
-    			menu_items.setModel(refresh_menu());
     		}
 		}
+		menu_items.setModel(refresh_menu());
+		menu_items.getModel().addTableModelListener(
+				new TableModelListener()
+				{
+					public void tableChanged(TableModelEvent e) {
+						int selectedRowIndex;
+						selectedRowIndex = menu_items.getSelectedRow();
+						menu_val[index][0] = menu_items.getValueAt(selectedRowIndex, 1).toString();
+						menu_val[index][1] = menu_items.getValueAt(selectedRowIndex, 2).toString();
+						index++;
+					}
+				});
+		index = 0;
 	}
 }

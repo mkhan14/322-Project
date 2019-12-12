@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 public class Main {
 	private static final String url = "jdbc:mysql://localhost:3306/chowtown";
 	private static final String root = "root";
-	private static final String password = "risa";
+	private static final String password = "mahin";
 	private static Connection conn = null;
 	
 	private static JFrame frame;
